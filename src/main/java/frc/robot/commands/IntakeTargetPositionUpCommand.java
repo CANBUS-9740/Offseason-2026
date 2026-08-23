@@ -17,4 +17,19 @@ public class IntakeTargetPositionUpCommand extends Command {
     public void initialize() {
         intakeArmSystem.setTargetPosition(RobotMap.INTAKE_ARM_MAX_ANGLE_DEG);
     }
+
+    @Override
+    public void execute() {
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        intakeArmSystem.stop();
+    }
 }

@@ -1,10 +1,8 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,13 +15,13 @@ import frc.robot.subsystems.*;
 import java.util.Optional;
 
 public class Robot extends TimedRobot {
+
     private Swerve swerveSystem;
     private IntakeArmSystem intakeArmSystem;
     private IntakeCollectorSystem intakeCollectorSystem;
     private StorageSystem storageSystem;
-    private StaticShooterSystem staticShooterSystem;
 
-    private LimelightAprilTag limelightAprilTag;
+    private Limelight limelight;
     private GameField gameField;
     private Pathplanner pathplanner;
 
@@ -32,9 +30,7 @@ public class Robot extends TimedRobot {
     private SwerveDriveCommand swerveDriveCommand;
 
     private GroupCommands groupCommands;
-    private EdiBoard ediBoard;
     private SendableChooser<Command> autoChooser;
-    private Pose2d swervePose;
 
 
     private Command collectCommand;
@@ -47,10 +43,8 @@ public class Robot extends TimedRobot {
         intakeArmSystem = new IntakeArmSystem();
         intakeCollectorSystem = new IntakeCollectorSystem();
         storageSystem = new StorageSystem();
-        staticShooterSystem = new StaticShooterSystem();
 
-        //limelightAprilTag = new LimelightAprilTag("limelight-apriltag");
-        limelightAprilTag = new LimelightAprilTag("limelight-forward");
+        limelight = new Limelight("limelight-forward");
 
         gameField = new GameField();
         pathplanner = new Pathplanner(swerveSystem);
@@ -59,19 +53,9 @@ public class Robot extends TimedRobot {
         operationController = new CommandXboxController(1);
 
         swerveDriveCommand = new SwerveDriveCommand(swerveSystem, driverController, false);
-
-
-        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, staticShooterSystem, gameField);
+        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
 
         swerveSystem.setDefaultCommand(swerveDriveCommand);
-
-        //driverController.a().whileTrue(new IntakeCollectCommand(intakeCollectorSystem));
-        //driverController.b().whileTrue(new StorageFeedToShooterCommand(storageSystem));
-        //driverController.x().onTrue(new IntakeArmDropCommand(intakeArmSystem));
-        //driverController.x().onTrue(new IntakeArmPositionCommand(intakeArmSystem, RobotMap.INTAKE_ARM_MAX_ANGLE_DEG));
-        //driverController.y().onTrue(new IntakeArmPositionCommand(intakeArmSystem, RobotMap.INTAKE_ARM_MIN_ANGLE_DEG));
-
-        //new StorageFeedToShooterCommand(storageSystem)
 
         CommandScheduler.getInstance().onCommandInitialize((command)-> {
             System.out.printf("CMD INIT %s %s\n", command.getName(), command.getClass().getName());
@@ -84,7 +68,6 @@ public class Robot extends TimedRobot {
         });
 
         // Final operation controller:
-
 
         collectCommand = groupCommands.intakeAndCollect();
         stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
@@ -103,22 +86,13 @@ public class Robot extends TimedRobot {
         operationController.x().onTrue(groupCommands.shootHub());
         operationController.rightBumper().onTrue(groupCommands.shootForBallTransfer());
 
-
-
-
-        // TODO: Test this pls :) no
         operationController.a().whileTrue(groupCommands.intakeUnjam1());
         operationController.start().onTrue(groupCommands.cancelAllCommands());
         operationController.b().whileTrue(groupCommands.intakeUnjam2());
         operationController.leftBumper().onTrue(groupCommands.shootForBallTransfer());
         operationController.pov(270).onTrue(groupCommands.shoot(2));
-        operationController.pov(45).onTrue(new ShooterFeederBackwardsCommand(staticShooterSystem));
 
         driverController.start().onTrue(groupCommands.cancelAllCommands());
-
-//        operationController.b().onTrue(new ShootStrafeTest(storageSystem,staticShooterSystem,2.22+0.56));
-
-        //ediBoard = new EdiBoard(storageSystem, intakeCollectorSystem, staticShooterSystem, intakeArmSystem, gameField, swerveSystem);
 
         autoChooser = new SendableChooser<>();
 
@@ -134,11 +108,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.updateValues();
         CommandScheduler.getInstance().run();
 
-        SmartDashboard.putNumber("FeedSensor", staticShooterSystem.getDistanceFromSensorMM());
-
-
-
-        Optional<LimelightHelpers.PoseEstimate> poseOpt = limelightAprilTag.getPose();
+        Optional<LimelightHelpers.PoseEstimate> poseOpt = limelight.getPose();
         if (poseOpt.isPresent()) {
             LimelightHelpers.PoseEstimate posCam = poseOpt.get();
             swerveSystem.addVisionMeasurement(posCam);
@@ -158,17 +128,11 @@ public class Robot extends TimedRobot {
 
         Pose2d swervePose = swerveSystem.getPose();
         SmartDashboard.putNumber("swerveAngleRobotFinal:", swervePose.getRotation().getDegrees());
-
-
-//        Pose2d turretPose = swervePose
-//                .transformBy(RobotMap.SHOOTER_POSE_ON_ROBOT_2D)
-//                .transformBy(new Transform2d(0, 0, Rotation2d.fromDegrees(shootTurretSystem.getEncoderAngleInDegrees())));
-//        swerveSystem.getField().getObject("Turret").setPose(turretPose);*/
     }
 
     @Override
     public void simulationInit() {
-        //eduard homo
+
     }
 
     @Override
@@ -193,18 +157,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        //staticShooterSystem.setShootVoltage(0.5);
-        //CommandScheduler.getInstance().schedule(new IntakeCollectCommand(intakeCollectorSystem));
-        //CommandScheduler.getInstance().schedule(new StorageFeedToShooterCommand(storageSystem));
-        //CommandScheduler.getInstance().schedule(new ShootCommandStaticPitch(staticShooterSystem, 500));
-
-
 
     }
 
     @Override
     public void teleopPeriodic() {
-        SmartDashboard.putNumber("distanceHub", gameField.getDistanceFromHubMeters(DriverStation.Alliance.Blue, swerveSystem));
+
     }
 
     @Override
@@ -214,10 +172,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-//        CommandScheduler.getInstance().schedule(new ParallelCommandGroup(new ShootCommandStaticPitch(staticShooterSystem,
-//                        staticShooterSystem.calculateFiringSpeedRpm(gameField.getDistanceFromHubMeters(DriverStation.Alliance.Blue, swerveSystem) * shooterOffset, 70))),
-//                new StorageFeedToShooterCommand(storageSystem));
-
         Command auto = autoChooser.getSelected();
         if (auto != null) {
             CommandScheduler.getInstance().schedule(auto);
@@ -236,33 +190,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void testInit() {
-        //CommandScheduler.getInstance().schedule(new IntakeArmPositionCommand3(intakeArmSystem));
-        //CommandScheduler.getInstance().schedule(new IntakeArmPositionCommand(intakeArmSystem, RobotMap.INTAKE_ARM_MAX_ANGLE_DEG));
-        //IntakeArmPositionCommand command = new IntakeArmPositionCommand(intakeArmSystem, 22);
-        //CommandScheduler.getInstance().schedule(command);
-        //CommandScheduler.getInstance().schedule(new GroupCommands().IntakeUntilFullCommand(intakeArmSystem, intakeCollectorSystem, storageSystem));
+
     }
 
     @Override
     public void testPeriodic() {
-        //intakeArmSystem.move(0.2);
-        //position.refresh();
-        //SmartDashboard.putNumber("ProcessVariable", position.getValue().in(Units.Rotations));
+
     }
 
     @Override
     public void testExit() {
 
     }
-
-    /*private Command alignToHub() {
-        return Commands.defer(()-> {
-            Pose2d swervePose = swerveSystem.getPose();
-            double[] angles = gameField.getTargetAngleTurretAndSwerveFrontHub(swervePose, DriverStation.getAlliance().get());
-            return Commands.parallel(
-                    new SwerveRotateToAngle(swerveSystem, angles[1]),
-                    new MoveShootTurretCommand(shootTurretSystem, angles[0])
-            );
-        }, Set.of(swerveSystem, shootTurretSystem));
-    }*/
 }
