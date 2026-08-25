@@ -83,4 +83,15 @@ public class RobotMap {
     public static final PathConstraints PATH_CONSTRAINTS = new PathConstraints(2, 2.5, Math.PI, Math.PI);
     public static final PIDConstants SWERVE_PATH_DRIVE_PID = new PIDConstants(5, 0, 0);
     public static final PIDConstants SWERVE_PATH_ROTATE_PID = new PIDConstants(3, 0, 0);
+
+    //Pitcher System
+    public static final int PITCHER_MOTOR_ID = 0; //ITS unknown :(
+    public static final double PITCHER_GEAR_RATIO = 0; //unknown rn
+    public static final int PITCHER_TOP_LIMITSWITCH = 0; // guess what... its unknown!
+    public static final int PITCHER_DOWN_LIMITSWITCH = 0; // YOU ARE NOT GONNA BELIEVE IT!!! its unknown XD...
+    public static final int PITCHER_MIN_ANGLE_DEGREES = 0; // THAT ACTUALLY KNOWN
+    public static final int PITCHER_MAX_ANGLE_DEGREES = 0; // DEAR INFO THIS IS UNKNOWN!!!
+    public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
+
+
 }
