@@ -56,6 +56,14 @@ public class RobotMap {
 
     // ----------------- Connections
 
+
+    // turret
+    public static final int TURRET_MOTOR_ID = 0;
+    public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
+    public static final int TURRET_MIDDLE_LIMIT_SWITCH_1_ID = 0;
+    public static final int TURRET_MIDDLE_LIMIT_SWITCH_2_ID = 0;
+
+
     // intake arm
     public static final int INTAKE_ARM_MOTOR_ID = 21;
 
@@ -72,6 +80,12 @@ public class RobotMap {
     public static final double STORAGE_GENERAL_ROLLERS_FORWARD_HIGH_SPEED =  0.8;
     public static final double STORAGE_GENERAL_ROLLERS_BACKWARDS_LOW_SPEED = -0.2;
 
+    //turret
+    public static final PIDConstants TURRET_PID = new PIDConstants(0,0,0);
+
+
+
+    // arm
     public static final double TOLERANCE_ARM_POSITION = 5;
     public static final double TOLERANCE_ARM_SPEED = 20;
     public static final double ARM_COS = 0.04;
