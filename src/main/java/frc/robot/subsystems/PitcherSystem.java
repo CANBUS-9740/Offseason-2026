@@ -7,18 +7,15 @@ import com.revrobotics.spark.*;
 import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
-import java.lang.module.Configuration;
+
 
 public class PitcherSystem extends SubsystemBase {
     private final SparkMax pitchermotor;
-    private final SparkMaxConfig config;
+
     private final AbsoluteEncoder encoder;
     private final SparkLimitSwitch toplimitswitch;
     private final SparkLimitSwitch bottomlimitswitch;
@@ -29,9 +26,15 @@ public class PitcherSystem extends SubsystemBase {
 
 
     public PitcherSystem(){
+        SparkMaxConfig config; //ez
         config = new SparkMaxConfig();
         pitchermotor = new SparkMax(RobotMap.PITCHER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
-        pidController = pitchermotor.getClosedLoopController(); // im not sure if right
+        config.absoluteEncoder //fixed mb
+                .positionConversionFactor(360 / RobotMap.PITCHER_GEARBOX_RATIO) //there is a gearbox on the motor so i kept the miltiplier and changed the place
+                .velocityConversionFactor(360 / RobotMap.PITCHER_GEARBOX_RATIO / 60); //same here
+        config.closedLoop.pid(RobotMap.PITCHER_PID.kP,RobotMap.PITCHER_PID.kI,RobotMap.PITCHER_PID.kD).outputRange(-1,1);
+        pitchermotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters); //moved
+        pidController = pitchermotor.getClosedLoopController();
         toplimitswitch = pitchermotor.getForwardLimitSwitch();
         bottomlimitswitch = pitchermotor.getReverseLimitSwitch();
         config.limitSwitch
@@ -41,26 +44,23 @@ public class PitcherSystem extends SubsystemBase {
                 .reverseLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor);
         config.idleMode(SparkBaseConfig.IdleMode.kBrake);
         encoder = pitchermotor.getAbsoluteEncoder();
-        config.encoder
-                .positionConversionFactor(360 / RobotMap.PITCHER_GEAR_RATIO) //dont know what to put here. update: found what to put here
-                .velocityConversionFactor(360 / RobotMap.PITCHER_GEAR_RATIO / 60); //same here
-        pitchermotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-        config.closedLoop.pid(RobotMap.PITCHER_PID.kP,RobotMap.PITCHER_PID.kI,RobotMap.PITCHER_PID.kD).outputRange(-1,1);
+
     }
     public void set(int speed){
      pitchermotor.set(speed);
 
     }
     public boolean isUp(){
-        boolean isTopPressed = toplimitswitch.isPressed();
-        return isTopPressed;
+        return toplimitswitch.isPressed();
     }
     public boolean isDown(){
-        boolean isBottomPressed = bottomlimitswitch.isPressed();
-        return isBottomPressed;
+        return bottomlimitswitch.isPressed(); //changed
     }
     public double getPositionDegrees(){
         return encoder.getPosition();
+    }
+    public double getVelocityDegrees(){
+        return encoder.getVelocity();
     }
     public void setPositionToPitch(double angleDegrees){
         pidController.setSetpoint(angleDegrees, SparkMax.ControlType.kPosition);
@@ -71,7 +71,7 @@ public class PitcherSystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // ITS DIAMONDS!! ITS DIAMONDS! ITS DIAMONDS!!!... no its LApeace (W speed).
+        // ITS DIAMONDS!! ITS DIAMONDS! ITS DIAMONDS!!!... no its LApeace (W speed). im keeping this.
         SmartDashboard.putNumber("PitcherSystem angleDegrees", getPositionDegrees());
         SmartDashboard.putBoolean("PitcherSystem isUP", isUp());
         SmartDashboard.putBoolean("PitcherSystem isDOWN", isDown()); // DOWNSYNDROME REFERENCE XD

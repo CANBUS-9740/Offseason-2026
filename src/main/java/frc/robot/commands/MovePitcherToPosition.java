@@ -21,7 +21,7 @@ public class MovePitcherToPosition extends Command {
 
     @Override
     public void execute() {
-        pitcherSystem.setPositionToPitch(targetAngleDegrees);
+
 
     }
 
@@ -32,6 +32,6 @@ public class MovePitcherToPosition extends Command {
 
     @Override
     public boolean isFinished() {
-        return Math.abs(pitcherSystem.getPositionDegrees() - targetAngleDegrees) <= 1.0;
+        return Math.abs(pitcherSystem.getPositionDegrees() - targetAngleDegrees) <= 1 && Math.abs(pitcherSystem.getVelocityDegrees()) <= 1;
     }
 }

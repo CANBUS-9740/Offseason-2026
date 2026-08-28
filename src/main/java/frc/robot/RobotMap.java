@@ -86,7 +86,7 @@ public class RobotMap {
 
     //Pitcher System
     public static final int PITCHER_MOTOR_ID = 0; //ITS unknown :(
-    public static final double PITCHER_GEAR_RATIO = 0; //unknown rn
+    public static final double PITCHER_GEARBOX_RATIO = 0; //unknown rn
     public static final int PITCHER_TOP_LIMITSWITCH = 0; // guess what... its unknown!
     public static final int PITCHER_DOWN_LIMITSWITCH = 0; // YOU ARE NOT GONNA BELIEVE IT!!! its unknown XD...
     public static final int PITCHER_MIN_ANGLE_DEGREES = 0; // THAT ACTUALLY KNOWN
