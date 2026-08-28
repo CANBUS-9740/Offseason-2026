@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
     private IntakeArmSystem intakeArmSystem;
     private IntakeCollectorSystem intakeCollectorSystem;
     private StorageSystem storageSystem;
+    private PitcherSystem pitcherSystem;
 
     private Limelight limelight;
     private GameField gameField;
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
         intakeArmSystem = new IntakeArmSystem();
         intakeCollectorSystem = new IntakeCollectorSystem();
         storageSystem = new StorageSystem();
+        pitcherSystem = new PitcherSystem();
 
         limelight = new Limelight("limelight-forward");
 

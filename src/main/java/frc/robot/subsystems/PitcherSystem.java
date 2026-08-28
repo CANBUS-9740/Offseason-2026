@@ -3,10 +3,11 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.*;
+import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,8 +20,10 @@ public class PitcherSystem extends SubsystemBase {
     private final SparkMax pitchermotor;
     private final SparkMaxConfig config;
     private final AbsoluteEncoder encoder;
-    private final DigitalInput toplimitswitch;
-    private final DigitalInput bottomlimitswitch;
+    private final SparkLimitSwitch toplimitswitch;
+    private final SparkLimitSwitch bottomlimitswitch;
+    private final SparkClosedLoopController pidController;
+
 
 
 
@@ -28,32 +31,39 @@ public class PitcherSystem extends SubsystemBase {
     public PitcherSystem(){
         config = new SparkMaxConfig();
         pitchermotor = new SparkMax(RobotMap.PITCHER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
-        toplimitswitch = new DigitalInput(RobotMap.PITCHER_TOP_LIMITSWITCH);
-        bottomlimitswitch = new DigitalInput(RobotMap.PITCHER_DOWN_LIMITSWITCH);
+        pidController = pitchermotor.getClosedLoopController(); // im not sure if right
+        toplimitswitch = pitchermotor.getForwardLimitSwitch();
+        bottomlimitswitch = pitchermotor.getReverseLimitSwitch();
+        config.limitSwitch
+                .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
+                .forwardLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor)
+                .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
+                .reverseLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor);
         config.idleMode(SparkBaseConfig.IdleMode.kBrake);
         encoder = pitchermotor.getAbsoluteEncoder();
         config.encoder
-                .positionConversionFactor(0)
-                .velocityConversionFactor(0);
+                .positionConversionFactor(360 / RobotMap.PITCHER_GEAR_RATIO) //dont know what to put here. update: found what to put here
+                .velocityConversionFactor(360 / RobotMap.PITCHER_GEAR_RATIO / 60); //same here
         pitchermotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
-        config.closedLoop.pid(RobotMap.PITCHER_PID.kP,RobotMap.PITCHER_PID.kI,RobotMap.PITCHER_PID.kD);
+        config.closedLoop.pid(RobotMap.PITCHER_PID.kP,RobotMap.PITCHER_PID.kI,RobotMap.PITCHER_PID.kD).outputRange(-1,1);
     }
     public void set(int speed){
      pitchermotor.set(speed);
 
     }
     public boolean isUp(){
-        return toplimitswitch.get();
+        boolean isTopPressed = toplimitswitch.isPressed();
+        return isTopPressed;
     }
     public boolean isDown(){
-        return bottomlimitswitch.get();
+        boolean isBottomPressed = bottomlimitswitch.isPressed();
+        return isBottomPressed;
     }
     public double getPositionDegrees(){
         return encoder.getPosition();
     }
     public void setPositionToPitch(double angleDegrees){
-        angleDegrees = getPositionDegrees(); // i know i need to multiply by something but dont know what or the equestion
-        // also i dont know what you wanted in "move motor with PID of SparkMax"
+        pidController.setSetpoint(angleDegrees, SparkMax.ControlType.kPosition);
     }
     public void stop(){
         pitchermotor.stopMotor();
