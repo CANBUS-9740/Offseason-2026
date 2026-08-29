@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import swervelib.parser.PIDFConfig;
 
 public class RobotMap {
 
@@ -93,5 +94,9 @@ public class RobotMap {
     public static final int PITCHER_MAX_ANGLE_DEGREES = 0; // DEAR INFO THIS IS UNKNOWN!!!
     public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
 
+    //Shooter System
+    public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
+    public static final PIDFConfig SHOOTER_PIDF = new PIDFConfig(0,0,0,0); // unknown for now
+     //unknown
 
 }
