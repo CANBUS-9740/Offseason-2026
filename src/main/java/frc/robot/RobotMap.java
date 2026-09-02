@@ -60,8 +60,7 @@ public class RobotMap {
     // turret
     public static final int TURRET_MOTOR_ID = 0;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
-    public static final int TURRET_MIDDLE_LIMIT_SWITCH_1_ID = 0;
-    public static final int TURRET_MIDDLE_LIMIT_SWITCH_2_ID = 0;
+    public static final double TURRET_GEAR_RATIO = 0;
 
 
     // intake arm

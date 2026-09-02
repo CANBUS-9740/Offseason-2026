@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
     private IntakeArmSystem intakeArmSystem;
     private IntakeCollectorSystem intakeCollectorSystem;
     private StorageSystem storageSystem;
+    private TurretSubsystem turretSubsystem;
 
     private Limelight limelight;
     private GameField gameField;
@@ -43,6 +44,7 @@ public class Robot extends TimedRobot {
         intakeArmSystem = new IntakeArmSystem();
         intakeCollectorSystem = new IntakeCollectorSystem();
         storageSystem = new StorageSystem();
+        turretSubsystem = new TurretSubsystem();
 
         limelight = new Limelight("limelight-forward");
 
