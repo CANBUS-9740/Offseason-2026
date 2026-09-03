@@ -5,17 +5,17 @@ import frc.robot.subsystems.ShooterSystem;
 
 public class ShootAtRequiredSpeed extends Command {
     private final ShooterSystem shooterSystem;
-    private final double targetspeed;
-    public ShootAtRequiredSpeed(ShooterSystem shooterSystem, double targetspeed) {
+    private final double targetVelocityRpm;
+    public ShootAtRequiredSpeed(ShooterSystem shooterSystem, double targetVelocityRpm) {
         this.shooterSystem = shooterSystem;
-        this.targetspeed = targetspeed;
+        this.targetVelocityRpm = targetVelocityRpm;
         addRequirements(shooterSystem);
 
     }
 
     @Override
     public void initialize() {
-        shooterSystem.setRotateAtVelocity(targetspeed);
+        shooterSystem.setRotateAtVelocity(targetVelocityRpm);
     }
 
     @Override

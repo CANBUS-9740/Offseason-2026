@@ -19,21 +19,15 @@ public class ShooterSystem extends SubsystemBase {
 
 
     public ShooterSystem(){
-        SparkFlexConfig config;
-        config = new SparkFlexConfig();
-        shootermotor = new SparkFlex(RobotMap.SHOOTER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless); //didnt write to me if you want brushless or not
-        config.encoder
-                .positionConversionFactor(0)
-                .velocityConversionFactor(0);
+        SparkFlexConfig config = new SparkFlexConfig();
+        shootermotor = new SparkFlex(RobotMap.SHOOTER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
+        
         config.closedLoop
-                .p(RobotMap.SHOOTER_PIDF.p)
-                .i(RobotMap.SHOOTER_PIDF.i)
-                .d(RobotMap.SHOOTER_PIDF.d); // I have problem with the ff it just doesnt work no matter what i tried
-        config.closedLoop.feedForward
-                        .kV(RobotMap.SHOOTER_PIDF.f); //i found this but i dont know if its works never used it
+                .p(RobotMap.SHOOTER_PIDF.kP)
+                .i(RobotMap.SHOOTER_PIDF.kI)
+                .d(RobotMap.SHOOTER_PIDF.kD);
 
-
-        shootermotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters); //didnt said what you want here
+        shootermotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pidController = shootermotor.getClosedLoopController();
         encoder = shootermotor.getEncoder();
 
@@ -42,15 +36,16 @@ public class ShooterSystem extends SubsystemBase {
     public void set(double speed){
         shootermotor.set(speed);
     }
+
     public void stop(){
         shootermotor.stopMotor();
     }
 
     public double getVelocityRPM(){
-        return encoder.getVelocity(); // im pretty sure thats what u wanted
-
+        return encoder.getVelocity();
     }
-    public void setRotateAtVelocity(double velocityRPM){
+
+    public void setRotateAtVelocity(double velocityRPM) {
         pidController.setSetpoint(velocityRPM, SparkBase.ControlType.kVelocity);
     }
 
