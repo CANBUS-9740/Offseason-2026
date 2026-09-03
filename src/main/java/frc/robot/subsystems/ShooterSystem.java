@@ -20,9 +20,9 @@ public class ShooterSystem extends SubsystemBase {
         shootermotor = new SparkFlex(RobotMap.SHOOTER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
         
         config.closedLoop
-                .p(RobotMap.SHOOTER_PIDF.kP)
-                .i(RobotMap.SHOOTER_PIDF.kI)
-                .d(RobotMap.SHOOTER_PIDF.kD);
+                .p(RobotMap.PITCHER_PID.kP)
+                .i(RobotMap.PITCHER_PID.kI)
+                .d(RobotMap.PITCHER_PID.kD);
 
         shootermotor.configure(config, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
         pidController = shootermotor.getClosedLoopController();

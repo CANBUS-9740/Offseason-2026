@@ -9,7 +9,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import swervelib.parser.PIDFConfig;
 
 public class RobotMap {
 
@@ -96,8 +95,6 @@ public class RobotMap {
 
     //Shooter System
     public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
-    public static final PIDConstants SHOOTER_PIDF = new PIDConstants(0,0,0); // unknown for now
+    public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
-    //unknown
-
 }
