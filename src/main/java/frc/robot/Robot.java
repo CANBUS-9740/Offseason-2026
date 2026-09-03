@@ -20,6 +20,7 @@ public class Robot extends TimedRobot {
     private IntakeArmSystem intakeArmSystem;
     private IntakeCollectorSystem intakeCollectorSystem;
     private StorageSystem storageSystem;
+    private TurretSubsystem turretSubsystem;
     private PitcherSystem pitcherSystem;
     private ShooterSystem shooterSystem;
 
@@ -45,6 +46,7 @@ public class Robot extends TimedRobot {
         intakeArmSystem = new IntakeArmSystem();
         intakeCollectorSystem = new IntakeCollectorSystem();
         storageSystem = new StorageSystem();
+        turretSubsystem = new TurretSubsystem();
         pitcherSystem = new PitcherSystem();
         shooterSystem = new ShooterSystem();
 
