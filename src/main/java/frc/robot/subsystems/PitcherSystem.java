@@ -26,7 +26,8 @@ public class PitcherSystem extends SubsystemBase {
         SparkMaxConfig config = new SparkMaxConfig();
         pitchermotor = new SparkMax(RobotMap.PITCHER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
 
-        config.closedLoop.pid(RobotMap.PITCHER_PID.kP, RobotMap.PITCHER_PID.kI, RobotMap.PITCHER_PID.kD).outputRange(-1, 1);
+        config.closedLoop.pid(RobotMap.PITCHER_PID.kP, RobotMap.PITCHER_PID.kI, RobotMap.PITCHER_PID.kD)
+                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
         config.limitSwitch
                 .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
                 .forwardLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor)
