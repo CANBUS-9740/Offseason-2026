@@ -97,6 +97,7 @@ public class RobotMap {
     //Shooter System
     public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
     public static final PIDConstants SHOOTER_PIDF = new PIDConstants(0,0,0); // unknown for now
-     //unknown
+    public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
+    //unknown
 
 }

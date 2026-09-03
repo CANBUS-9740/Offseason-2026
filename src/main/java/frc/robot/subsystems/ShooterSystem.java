@@ -3,20 +3,17 @@ package frc.robot.subsystems;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkBase;
-import com.revrobotics.spark.SparkClosedLoopController;
-import com.revrobotics.spark.SparkFlex;
-import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.*;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 
 public class ShooterSystem extends SubsystemBase {
+
     private final SparkFlex shootermotor;
     private final RelativeEncoder encoder;
     private final SparkClosedLoopController pidController;
-
 
     public ShooterSystem(){
         SparkFlexConfig config = new SparkFlexConfig();
@@ -46,7 +43,8 @@ public class ShooterSystem extends SubsystemBase {
     }
 
     public void setRotateAtVelocity(double velocityRPM) {
-        pidController.setSetpoint(velocityRPM, SparkBase.ControlType.kVelocity);
+        double ff = velocityRPM / RobotMap.MAX_SHOOTER_VELOCITY_RPM;
+        pidController.setSetpoint(velocityRPM, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ff, SparkClosedLoopController.ArbFFUnits.kPercentOut);
     }
 
     @Override
