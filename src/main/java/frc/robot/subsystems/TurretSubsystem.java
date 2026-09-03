@@ -20,53 +20,41 @@ public class TurretSubsystem extends SubsystemBase {
     private final SparkLimitSwitch middleLimitSwitchBackward;
     private final SparkClosedLoopController pidController;
 
-
-
     public TurretSubsystem(){
         motor = new SparkMax(RobotMap.TURRET_MOTOR_ID , SparkLowLevel.MotorType.kBrushless);
         SparkMaxConfig config = new SparkMaxConfig();
         forwardLimitSwitch = new DigitalInput(RobotMap.TURRET_FORWARD_LIMIT_SWITCH_ID);
-
-
 
         config.closedLoop
                 .p(0)
                 .i(0)
                 .d(0);
 
-
-
         config.limitSwitch
-                .forwardLimitSwitchEnabled(true)
+                .forwardLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor)
                 .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
-                .reverseLimitSwitchEnabled(true)
+                .reverseLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor)
                 .reverseLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen);
 
         config.closedLoop.pid(RobotMap.TURRET_PID.kP,RobotMap.TURRET_PID.kI,RobotMap.TURRET_PID.kD);
-        config.idleMode(SparkBaseConfig.IdleMode.kCoast);
-        motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
+        config.idleMode(SparkBaseConfig.IdleMode.kBrake);
         config.encoder.positionConversionFactor(1 / RobotMap.TURRET_GEAR_RATIO);
         config.encoder.velocityConversionFactor(1 / RobotMap.TURRET_GEAR_RATIO);
 
+        motor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
         middleLimitSwitchForward = motor.getForwardLimitSwitch();
         middleLimitSwitchBackward = motor.getReverseLimitSwitch();
         encoder = motor.getEncoder();
 
         pidController = motor.getClosedLoopController();
-
-
     }
 
     public void moveToSetpoint(double angleDegrees) {
         // configure the wanted setpoint to start the PID loop
-        angleDegrees = (angleDegrees/360.0) * RobotMap.TURRET_GEAR_RATIO;
-        pidController.setSetpoint(angleDegrees, SparkBase.ControlType.kPosition);
-
+        double setpoint = angleDegrees / 360.0;
+        pidController.setSetpoint(setpoint, SparkBase.ControlType.kPosition);
     }
-
-
-
 
     public void setMotor(double speed){
         motor.set(speed);
@@ -80,25 +68,28 @@ public class TurretSubsystem extends SubsystemBase {
         return forwardLimitSwitch.get();
     }
 
+    public boolean isHardForwardLimitSwitch() {
+        return middleLimitSwitchForward.isPressed();
+    }
 
-
+    public boolean isHardBackwardLimitSwitch() {
+        return middleLimitSwitchBackward.isPressed();
+    }
 
     public double getPositionDegrees(){
         return encoder.getPosition() * 360;
     }
-    public void setEncoder(){
-        encoder.setPosition(0);
+
+    public boolean isAtPosition(double angleDegrees) {
+        return Math.abs(getPositionDegrees() - angleDegrees) <= 1 && encoder.getVelocity() <= 5;
     }
 
-
+    public void setEncoder(double angleDegrees){
+        encoder.setPosition(angleDegrees);
+    }
 
     public void periodic(){
-        SmartDashboard.putNumber("turretPositionDegrees: ", getPositionDegrees());
-        SmartDashboard.putBoolean(("forwardLimitSwitch: ") , isForwardLimitSwitch());
-
-
-
+        SmartDashboard.putNumber("turretPositionDegrees", getPositionDegrees());
+        SmartDashboard.putBoolean("forwardLimitSwitch", isForwardLimitSwitch());
     }
-
-
 }

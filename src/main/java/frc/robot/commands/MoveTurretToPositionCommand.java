@@ -1,36 +1,27 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.TurretSubsystem;
 
 public class MoveTurretToPositionCommand extends Command {
     private final TurretSubsystem turretSubsystem;
 
-    private double target;
+    private double targetAngleDegrees;
 
-    private double speed;
-
-
-    public MoveTurretToPositionCommand(TurretSubsystem turretSubsystem,double target,double speed){
+    public MoveTurretToPositionCommand(TurretSubsystem turretSubsystem, double targetAngleDegrees){
         this.turretSubsystem = turretSubsystem;
-
-        this.target = target;
-        this.speed = speed;
-
-
+        this.targetAngleDegrees = targetAngleDegrees;
         addRequirements(turretSubsystem);
     }
 
 
     @Override
     public void initialize() {
-        turretSubsystem.moveToSetpoint(target);
+        turretSubsystem.moveToSetpoint(targetAngleDegrees);
     }
 
     @Override
     public void execute() {
-        turretSubsystem.setMotor(speed);
 
     }
 
@@ -41,6 +32,6 @@ public class MoveTurretToPositionCommand extends Command {
 
     @Override
     public boolean isFinished() {
-        return turretSubsystem.getPositionDegrees() == target;
+        return turretSubsystem.isAtPosition(targetAngleDegrees);
     }
 }
