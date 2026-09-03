@@ -93,5 +93,8 @@ public class RobotMap {
     public static final int PITCHER_MAX_ANGLE_DEGREES = 0; // DEAR INFO THIS IS UNKNOWN!!!
     public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
 
-
+    //Shooter System
+    public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
+    public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
+    public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
 }
