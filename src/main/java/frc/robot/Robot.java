@@ -40,6 +40,9 @@ public class Robot extends TimedRobot {
     private Command stopCollectCommand;
     private boolean isCollecting = false;
 
+    private FeederSubsystem feederSubsystem;
+
+
     @Override
     public void robotInit() {
         swerveSystem = new Swerve();
@@ -49,6 +52,8 @@ public class Robot extends TimedRobot {
         turretSubsystem = new TurretSubsystem();
         pitcherSystem = new PitcherSystem();
         shooterSystem = new ShooterSystem();
+        feederSubsystem = new FeederSubsystem();
+
 
         limelight = new Limelight("limelight-forward");
 
