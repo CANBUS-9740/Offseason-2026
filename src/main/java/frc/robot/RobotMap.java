@@ -2,10 +2,8 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import com.thethriftybot.wrappers.NetworkTableWrapper;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -19,6 +17,14 @@ public class RobotMap {
     // ----------------- Field info
 
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(104);
+
+
+    public static final Translation2d HUB_RED_METERS = new Translation2d(7.2898,4.021328);
+    public static final Translation2d HUB_BLUE_METERS = new Translation2d(3.6449,4.021328);
+
+
+
+
 
     // ----------------- Sizes / Measurements of robot characteristics
 
@@ -61,6 +67,8 @@ public class RobotMap {
     public static final int TURRET_MOTOR_ID = 0;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
     public static final double TURRET_GEAR_RATIO = 15;
+    public static final double TURRET_MIN_ANGLE = 0;
+    public static final double TURRET_MAX_ANGLE = 180;
 
     public static final double FORAWRD_LIMIT_SWITCH_ANGLE = 0;
     public static final double FORAWRD_HARD_LIMIT_SWITCH_ANGLE = 90;

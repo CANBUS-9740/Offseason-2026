@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
         limelight = new Limelight("limelight-forward");
 
-        gameField = new GameField();
+        gameField = new GameField(swerveSystem);
         pathplanner = new Pathplanner(swerveSystem);
 
         driverController = new CommandXboxController(0);
