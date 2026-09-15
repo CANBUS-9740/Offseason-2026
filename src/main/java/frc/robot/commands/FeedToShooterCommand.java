@@ -1,12 +1,13 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.RobotMap;
 import frc.robot.subsystems.FeederSubsystem;
 
-public class FeederCommand extends Command {
+public class FeedToShooterCommand extends Command {
     private final FeederSubsystem subsystem;
 
-    public FeederCommand(FeederSubsystem subsystem){
+    public FeedToShooterCommand(FeederSubsystem subsystem){
         this.subsystem = subsystem;
 
         addRequirements(subsystem);
@@ -14,7 +15,7 @@ public class FeederCommand extends Command {
 
     @Override
     public void initialize() {
-        subsystem.set(55555555);
+        subsystem.set(RobotMap.FEEDER_VELOCITY_RPM);
     }
 
     @Override
