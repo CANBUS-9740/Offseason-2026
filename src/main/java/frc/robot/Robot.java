@@ -73,9 +73,11 @@ public class Robot extends TimedRobot {
             System.out.printf("CMD FIN %s %s\n", command.getName(), command.getClass().getName());
         });
 
+        autoChooser = new SendableChooser<>();
+
         // Final operation controller:
 
-        collectCommand = groupCommands.intakeAndCollect();
+        /*collectCommand = groupCommands.intakeAndCollect();
         stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
 
         operationController.y().onTrue(new InstantCommand(() -> {
@@ -100,13 +102,13 @@ public class Robot extends TimedRobot {
 
         driverController.start().onTrue(groupCommands.cancelAllCommands());
 
-        autoChooser = new SendableChooser<>();
+
 
         autoChooser.addOption("dontMove", null);
         autoChooser.addOption("middle:", groupCommands.autoMiddle());
         autoChooser.addOption("right:", groupCommands.autoSideRight());
         autoChooser.addOption("left:", groupCommands.autoSideLeft());
-        SmartDashboard.putData("auto chooser", autoChooser);
+        SmartDashboard.putData("auto chooser", autoChooser);*/
     }
 
     @Override
@@ -119,21 +121,6 @@ public class Robot extends TimedRobot {
             LimelightHelpers.PoseEstimate posCam = poseOpt.get();
             swerveSystem.addVisionMeasurement(posCam);
         }
-
-        Pose2d hubPose = gameField.getHubPose(DriverStation.Alliance.Red);
-        swerveSystem.getField().getObject("HubPose").setPose(hubPose);
-
-        Pose2d transferPose = gameField.getPositionForBallTransfer(DriverStation.Alliance.Red, swerveSystem.getPose());
-        swerveSystem.getField().getObject("TransferPoint").setPose(transferPose);
-
-        double distance = gameField.getDistanceFromHubMeters(DriverStation.Alliance.Red, swerveSystem);
-        SmartDashboard.putNumber("DistanceToAllianceHub", distance);
-
-        double targetAngle = gameField.getTargetAngleSwerveToHub(swerveSystem.getPose(), DriverStation.getAlliance().orElse(DriverStation.Alliance.Red));
-        SmartDashboard.putNumber("robotTargetAngle", targetAngle);
-
-        Pose2d swervePose = swerveSystem.getPose();
-        SmartDashboard.putNumber("swerveAngleRobotFinal:", swervePose.getRotation().getDegrees());
     }
 
     @Override
