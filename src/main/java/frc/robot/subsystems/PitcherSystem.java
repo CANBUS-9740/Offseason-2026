@@ -8,9 +8,12 @@ import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
+import frc.robot.sim.PitcherSim;
+import frc.robot.sim.ShooterSim;
 
 
 public class PitcherSystem extends SubsystemBase {
@@ -21,6 +24,7 @@ public class PitcherSystem extends SubsystemBase {
     private final SparkLimitSwitch bottomlimitswitch;
     private final SparkClosedLoopController pidController;
 
+    private final PitcherSim sim;
 
     public PitcherSystem() {
         SparkMaxConfig config = new SparkMaxConfig();
@@ -40,9 +44,15 @@ public class PitcherSystem extends SubsystemBase {
         pidController = pitchermotor.getClosedLoopController();
         toplimitswitch = pitchermotor.getForwardLimitSwitch();
         bottomlimitswitch = pitchermotor.getReverseLimitSwitch();
+
+        if (RobotBase.isSimulation()) {
+            sim = new PitcherSim(pitchermotor);
+        } else {
+            sim = null;
+        }
     }
 
-    public void set(int speed) {
+    public void set(double speed) {
         pitchermotor.set(speed);
     }
 
@@ -74,11 +84,32 @@ public class PitcherSystem extends SubsystemBase {
         pitchermotor.stopMotor();
     }
 
+    public double calculateFiringAngleDegrees(double distanceMeters, double firingVelocityRpm) {
+        double targetHeightMeters = RobotMap.HUB_HEIGHT_METERS - RobotMap.TURRET_POSE_ON_ROBOT.getZ();
+        double a = (-9.81 * distanceMeters * distanceMeters) / (2 * firingVelocityRpm * firingVelocityRpm);
+        double b = distanceMeters;
+        double c = a - targetHeightMeters;
+        double discriminant = Math.pow(b, 2) - (4 * a * c);
+        double tanRoot1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+        double tanRoot2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+        double radiant1 = Math.atan(tanRoot1);
+        double radiant2 = Math.atan(tanRoot2);
+        double degrees1 = Math.toDegrees(radiant1);
+        double degrees2 = Math.toDegrees(radiant2);
+
+        return Math.max(degrees1, degrees2);
+    }
+
     @Override
     public void periodic() {
         // ITS DIAMONDS!! ITS DIAMONDS! ITS DIAMONDS!!!... no its LApeace (W speed). im keeping this.
         SmartDashboard.putNumber("PitcherSystem angleDegrees", getPositionDegrees());
         SmartDashboard.putBoolean("PitcherSystem isUP", isUp());
         SmartDashboard.putBoolean("PitcherSystem isDOWN", isDown()); // DOWNSYNDROME REFERENCE XD
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        sim.update();
     }
 }

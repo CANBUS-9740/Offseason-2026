@@ -3,9 +3,7 @@ package frc.robot;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -23,6 +21,13 @@ public class RobotMap {
     // ----------------- Sizes / Measurements of robot characteristics
 
     public static final double ROBOT_LENGTH_METERS = 0;
+    public static final double ROBOT_HEIGHT_METERS = 55;
+
+    public static final double SHOOTER_WHEEL_MASS_KG = 0.0544;
+    public static final double SHOOTER_WHEEL_MASS_KG_SMALL = 0.015876;
+    public static final double SHOOTER_NEO_11_MASS_KG = 0.425;
+    public static final double SHOOTER_NEO_VORTEX_MASS_KG = 0.445;
+    public static final double TOTAL_SHOOTER_HEX_BORE_INCH_MASS_KG = 0.121;
 
     // intake arm
     public static final DCMotor INTAKE_ARM_MOTOR = DCMotor.getNEO(1);
@@ -34,8 +39,7 @@ public class RobotMap {
     public static final double INTAKE_ARM_MAX_ANGLE_DEG = 90;
     public static final double INTAKE_ARM_START_ANGLE_RAD = INTAKE_ARM_MAX_ANGLE_DEG;
     public static final double INTAKE_ARM_MIN_ANGLE_RAD = 0;
-    public static final double INTAKE_ARM_MAX_ANGLE_RAD = 92.5; // last 2 lines are for compiling only
-    public static final TrapezoidProfile.Constraints INTAKE_ARM_MOTION_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(1000, 500);
+    public static final double INTAKE_ARM_MAX_ANGLE_RAD = 92.5;
 
     // intake collector
     public static final DCMotor COLLECTOR_MOTOR = DCMotor.getNEO(1);
@@ -82,12 +86,9 @@ public class RobotMap {
     // collector
     public static final double COLLECTOR_SPEED =  0.8 ;//0.85;
     public static final double STORAGE_GENERAL_ROLLERS_FORWARD_HIGH_SPEED =  0.8;
-    public static final double STORAGE_GENERAL_ROLLERS_BACKWARDS_LOW_SPEED = -0.2;
 
     //turret
     public static final PIDConstants TURRET_PID = new PIDConstants(0,0,0);
-
-
 
     // arm
     public static final double TOLERANCE_ARM_POSITION = 5;
@@ -103,16 +104,25 @@ public class RobotMap {
     public static final PIDConstants SWERVE_PATH_ROTATE_PID = new PIDConstants(3, 0, 0);
 
     //Pitcher System
-    public static final int PITCHER_MOTOR_ID = 0; //ITS unknown :(
-    public static final double PITCHER_GEARBOX_RATIO = 0; //unknown rn
-    public static final int PITCHER_TOP_LIMITSWITCH = 0; // guess what... its unknown!
-    public static final int PITCHER_DOWN_LIMITSWITCH = 0; // YOU ARE NOT GONNA BELIEVE IT!!! its unknown XD...
-    public static final int PITCHER_MIN_ANGLE_DEGREES = 0; // THAT ACTUALLY KNOWN
-    public static final int PITCHER_MAX_ANGLE_DEGREES = 0; // DEAR INFO THIS IS UNKNOWN!!!
-    public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
+    public static final int PITCHER_MOTOR_ID = 66;
+    public static final double INITIAL_FIRING_ANGLE_DEGREES = 103.071;
+    public static final int PITCHER_MIN_ANGLE_DEGREES = 0;
+    public static final int PITCHER_MAX_ANGLE_DEGREES = 30;
+    public static final PIDConstants PITCHER_PID = new PIDConstants(1,0,0);// TRIPLE UNKNOWN THIS AMAZING!
+    public static final DCMotor SHOOTER_PITCHER_MOTOR = DCMotor.getNEO(1);
+    public static final double PITCHER_MASS_KG = SHOOTER_WHEEL_MASS_KG*3 + SHOOTER_WHEEL_MASS_KG_SMALL*5 + SHOOTER_NEO_11_MASS_KG + SHOOTER_NEO_VORTEX_MASS_KG + TOTAL_SHOOTER_HEX_BORE_INCH_MASS_KG;
+    public static final double PITCHER_LENGTH_M = 0.22;
+    public static final double PITCHER_MOI = (1 / 3.0) * PITCHER_MASS_KG * PITCHER_LENGTH_M * PITCHER_LENGTH_M;
+    public static final double PITCHER_GEAR_RATIO = 5;
 
     //Shooter System
-    public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
-    public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
+    public static final int SHOOTER_MOTOR_ID = 67; //UNKNOWN
+    public static final PIDConstants SHOOTER_PID = new PIDConstants(1,0,0); // unknown for now
+    public static final double SHOOTER_WHEEL_RADIUS_METERS = 0.0381;
+    public static final double SHOOTER_WHEEL_RADIUS_METERS_SMALL = 0.0254;
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
+    public static final DCMotor SHOOTER_MOTOR = DCMotor.getNeoVortex(1);
+    public static final double SHOOTER_GEAR_RATIO = 1;
+    public static final double SHOOTER_MOI = (1 / 2.0) * SHOOTER_WHEEL_MASS_KG * SHOOTER_WHEEL_RADIUS_METERS * SHOOTER_WHEEL_RADIUS_METERS;
+    public static final Transform3d TURRET_POSE_ON_ROBOT = new Transform3d(0, 0.370,0.132, Rotation3d.kZero);
 }

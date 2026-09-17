@@ -1,18 +1,10 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.IntakeCollectCommand;
-import frc.robot.commands.IntakeDownCarefullyCommand;
-import frc.robot.commands.IntakeTargetPositionUpCommand;
-import frc.robot.subsystems.IntakeArmSystem;
-import frc.robot.subsystems.IntakeCollectorSystem;
-import frc.robot.subsystems.StorageSystem;
-import frc.robot.subsystems.Swerve;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+
+import java.util.Set;
 
 public class GroupCommands {
 
@@ -21,17 +13,43 @@ public class GroupCommands {
     private final IntakeCollectorSystem intakeCollectorSystem;
     private final StorageSystem storageSystem;
     private final GameField gameField;
+    private final ShooterSystem shooterSystem;
+    private final PitcherSystem pitcherSystem;
+    private final TurretSubsystem turretSubsystem;
 
     public GroupCommands(Swerve swerveSystem,
                          IntakeArmSystem intakeArmSystem,
                          IntakeCollectorSystem intakeCollectorSystem,
                          StorageSystem storageSystem,
-                         GameField gameField) {
+                         GameField gameField,
+                         ShooterSystem shooterSystem,
+                         PitcherSystem pitcherSystem,
+                         TurretSubsystem turretSubsystem) {
         this.swerveSystem = swerveSystem;
         this.intakeArmSystem = intakeArmSystem;
         this.intakeCollectorSystem = intakeCollectorSystem;
         this.storageSystem = storageSystem;
         this.gameField = gameField;
+        this.shooterSystem = shooterSystem;
+        this.pitcherSystem = pitcherSystem;
+        this.turretSubsystem = turretSubsystem;
+    }
+    public Command shootToHub() {
+        Command command = Commands.defer(()-> {
+            double angleForTurret = 0;
+            double distance = 0;
+            double velocity = 0;
+            double firingAngle = pitcherSystem.calculateFiringAngleDegrees(distance, velocity);
+            return new ParallelCommandGroup(
+                    new MoveTurretToPositionCommand(turretSubsystem, angleForTurret),
+                    new ShootAtRequiredSpeed(shooterSystem, velocity),
+                    new MovePitcherToPosition(pitcherSystem, firingAngle)
+                    // new FeedToShooterCommand(storageSystem)
+            );
+        }, Set.of(shooterSystem, pitcherSystem/*, feederSystem*/, turretSubsystem));
+
+        command.setName("GroupCommands.shootToHub");
+        return command;
     }
 
     public Command intakeAndCollect() {

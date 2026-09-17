@@ -1,15 +1,16 @@
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.*;
+import frc.robot.sim.BallSim;
 import frc.robot.subsystems.*;
 
 import java.util.Optional;
@@ -35,10 +36,7 @@ public class Robot extends TimedRobot {
     private GroupCommands groupCommands;
     private SendableChooser<Command> autoChooser;
 
-
-    private Command collectCommand;
-    private Command stopCollectCommand;
-    private boolean isCollecting = false;
+    private BallSim ballSim;
 
     @Override
     public void robotInit() {
@@ -50,6 +48,12 @@ public class Robot extends TimedRobot {
         pitcherSystem = new PitcherSystem();
         shooterSystem = new ShooterSystem();
 
+        if (RobotBase.isSimulation()) {
+            ballSim = new BallSim(swerveSystem.getField());
+        } else {
+            ballSim = null;
+        }
+
         limelight = new Limelight("limelight-forward");
 
         gameField = new GameField();
@@ -59,7 +63,7 @@ public class Robot extends TimedRobot {
         operationController = new CommandXboxController(1);
 
         swerveDriveCommand = new SwerveDriveCommand(swerveSystem, driverController, false);
-        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
+        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField, shooterSystem, pitcherSystem ,turretSubsystem);
 
         swerveSystem.setDefaultCommand(swerveDriveCommand);
 
@@ -130,7 +134,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-
+        ballSim.update();
     }
 
     @Override
@@ -194,5 +198,15 @@ public class Robot extends TimedRobot {
     @Override
     public void testExit() {
 
+    }
+
+    public void launchBall() {
+        Pose3d robotPose = new Pose3d(swerveSystem.getPose());
+        Pose3d shootPose = robotPose.plus(RobotMap.TURRET_POSE_ON_ROBOT);
+        double firingAngleDegrees = pitcherSystem.getPositionDegrees();
+        double firingDirectionDegrees = turretSubsystem.getPositionDegrees();
+        double firingVelocityRpm = shooterSystem.getVelocityRPM();
+
+        ballSim.launchBall(shootPose.getTranslation(), firingDirectionDegrees, firingVelocityRpm, firingAngleDegrees);
     }
 }
