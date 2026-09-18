@@ -14,25 +14,25 @@ import frc.robot.RobotMap;
 
 public class ShootTurretSim {
 
-    private final DCMotorSim sim;
-    private final SparkMaxSim motorSim;
-    private final SparkLimitSwitchSim forwardLimitSwitchSim;
-    private final SparkLimitSwitchSim reverseLimitSwitchSim;
+    private final DCMotorSim sim = null;
+    private final SparkMaxSim motorSim = null;
+    private final SparkLimitSwitchSim forwardLimitSwitchSim = null;
+    private final SparkLimitSwitchSim reverseLimitSwitchSim = null;
 
     private final DIOSim limitSwitchMiddle;
 
     public ShootTurretSim(SparkMax motor, DigitalInput limitSwitchMiddle) {
-        motorSim = new SparkMaxSim(motor, RobotMap.SHOOT_TURRET_MOTOR);
-        forwardLimitSwitchSim = motorSim.getForwardLimitSwitchSim();
-        reverseLimitSwitchSim = motorSim.getReverseLimitSwitchSim();
+        //motorSim = new SparkMaxSim(motor, RobotMap.SHOOT_TURRET_MOTOR);
+        //forwardLimitSwitchSim = motorSim.getForwardLimitSwitchSim();
+        //reverseLimitSwitchSim = motorSim.getReverseLimitSwitchSim();
 
         this.limitSwitchMiddle = new DIOSim(limitSwitchMiddle.getChannel());
         this.limitSwitchMiddle.setIsInput(true);
 
-        sim = new DCMotorSim(
+        /*sim = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(RobotMap.SHOOT_TURRET_MOTOR, RobotMap.SHOOT_TURRET_MOMENT_OF_INERTIA, RobotMap.SHOOT_TURRET_GEAR_RATIO),
                 RobotMap.SHOOT_TURRET_MOTOR
-        );
+        );*/
     }
 
     public void update() {
@@ -47,9 +47,9 @@ public class ShootTurretSim {
         motorSim.iterate(sim.getAngularVelocityRPM(), RobotController.getBatteryVoltage(), 0.02);
 
         double posDegrees = Units.radiansToDegrees(sim.getAngularPositionRad()) % 360;
-        limitSwitchMiddle.setValue(MathUtil.isNear(RobotMap.SHOOT_TURRET_MIDDLE_ANGLE_DEGREES, posDegrees, 3));
-        forwardLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.SHOOT_TURRET_MAX_ANGLE_DEGREES, posDegrees, 5));
-        reverseLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.SHOOT_TURRET_MIN_ANGLE_DEGREES, posDegrees, 5));
+        //limitSwitchMiddle.setValue(MathUtil.isNear(RobotMap.SHOOT_TURRET_MIDDLE_ANGLE_DEGREES, posDegrees, 3));
+        //forwardLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.SHOOT_TURRET_MAX_ANGLE_DEGREES, posDegrees, 5));
+        //reverseLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.SHOOT_TURRET_MIN_ANGLE_DEGREES, posDegrees, 5));
     }
 
     private double translateAngle(double angleDegrees) {

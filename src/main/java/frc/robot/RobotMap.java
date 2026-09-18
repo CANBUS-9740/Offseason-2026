@@ -2,10 +2,8 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import com.thethriftybot.wrappers.NetworkTableWrapper;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -19,6 +17,14 @@ public class RobotMap {
     // ----------------- Field info
 
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(104);
+
+
+    public static final Translation2d HUB_RED_METERS = new Translation2d(11.896080,4.041692);
+    public static final Translation2d HUB_BLUE_METERS = new Translation2d(4.593718,4.011138);
+
+
+
+
 
     // ----------------- Sizes / Measurements of robot characteristics
 
@@ -61,6 +67,8 @@ public class RobotMap {
     public static final int TURRET_MOTOR_ID = 0;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
     public static final double TURRET_GEAR_RATIO = 15;
+    public static final double TURRET_MIN_ANGLE = 0;
+    public static final double TURRET_MAX_ANGLE = 180;
 
     public static final double FORAWRD_LIMIT_SWITCH_ANGLE = 0;
     public static final double FORAWRD_HARD_LIMIT_SWITCH_ANGLE = 90;
@@ -103,7 +111,7 @@ public class RobotMap {
     public static final PIDConstants SWERVE_PATH_ROTATE_PID = new PIDConstants(3, 0, 0);
 
     //Pitcher System
-    public static final int PITCHER_MOTOR_ID = 0; //ITS unknown :(
+    public static final int PITCHER_MOTOR_ID = 35; //ITS unknown :(
     public static final double PITCHER_GEARBOX_RATIO = 0; //unknown rn
     public static final int PITCHER_TOP_LIMITSWITCH = 0; // guess what... its unknown!
     public static final int PITCHER_DOWN_LIMITSWITCH = 0; // YOU ARE NOT GONNA BELIEVE IT!!! its unknown XD...
@@ -112,7 +120,8 @@ public class RobotMap {
     public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
 
     //Shooter System
-    public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
+    public static final  double SHOOTER_WHEEL_RADIUS_METERS = 0;
+    public static final int SHOOTER_MOTOR_ID = 56; //UNKNOWN
     public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
 }
