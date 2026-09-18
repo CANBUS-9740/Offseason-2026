@@ -19,8 +19,8 @@ public class RobotMap {
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(104);
 
 
-    public static final Translation2d HUB_RED_METERS = new Translation2d(7.2898,4.021328);
-    public static final Translation2d HUB_BLUE_METERS = new Translation2d(3.6449,4.021328);
+    public static final Translation2d HUB_RED_METERS = new Translation2d(11.896080,4.041692);
+    public static final Translation2d HUB_BLUE_METERS = new Translation2d(4.593718,4.011138);
 
 
 
@@ -111,7 +111,7 @@ public class RobotMap {
     public static final PIDConstants SWERVE_PATH_ROTATE_PID = new PIDConstants(3, 0, 0);
 
     //Pitcher System
-    public static final int PITCHER_MOTOR_ID = 0; //ITS unknown :(
+    public static final int PITCHER_MOTOR_ID = 35; //ITS unknown :(
     public static final double PITCHER_GEARBOX_RATIO = 0; //unknown rn
     public static final int PITCHER_TOP_LIMITSWITCH = 0; // guess what... its unknown!
     public static final int PITCHER_DOWN_LIMITSWITCH = 0; // YOU ARE NOT GONNA BELIEVE IT!!! its unknown XD...
@@ -120,7 +120,8 @@ public class RobotMap {
     public static final PIDConstants PITCHER_PID = new PIDConstants(0,0,0);// TRIPLE UNKNOWN THIS AMAZING!
 
     //Shooter System
-    public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
+    public static final  double SHOOTER_WHEEL_RADIUS_METERS = 0;
+    public static final int SHOOTER_MOTOR_ID = 56; //UNKNOWN
     public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
 }

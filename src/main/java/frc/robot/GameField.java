@@ -3,23 +3,16 @@ package frc.robot;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Swerve;
-
-import java.util.Locale;
-import java.util.Optional;
 
 public class GameField {
     // Origin 0,0 at blue 
     // https://github.com/wpilibsuite/allwpilib/blob/main/apriltag/src/main/native/resources/edu/wpi/first/apriltag/2026-rebuilt-welded.json
     private final AprilTagFieldLayout layout;
-    private Swerve swerve;
-
-
-
+    private final Swerve swerve;
 
     public GameField(Swerve swerve) {
         this.swerve = swerve;
@@ -28,35 +21,31 @@ public class GameField {
     }
 
     public Translation2d hubPosition(){
-        Translation2d hubPosition;
         DriverStation.Alliance alliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Red);
         if(alliance == DriverStation.Alliance.Red){
-            hubPosition = RobotMap.HUB_RED_METERS;
+            return RobotMap.HUB_RED_METERS;
         }
         else{
-            hubPosition = RobotMap.HUB_BLUE_METERS;
+            return RobotMap.HUB_BLUE_METERS;
         }
-        return hubPosition;
     }
 
-    public double calculateTurretAngleToHubDegrees(){
-        double front,nextTo,alpha,beta,target,shortenedAngle,clampedAngle;
-        Pose2d robotPose;
-        robotPose = swerve.getPose();
-        robotPose.getRotation().getDegrees();
+    public double calculateTurretAngleToHubDegrees(Pose2d startPose) {
+        Translation2d hubPosition = hubPosition();
+        double front = hubPosition.getY() - startPose.getY();
+        double nextTo = hubPosition.getX() - startPose.getX();
 
-        front = hubPosition().getX() - robotPose.getX();
-        nextTo = hubPosition().getY() - robotPose.getY();
+        double alpha = Math.toDegrees(Math.atan2(front, nextTo));
+        double beta = startPose.getRotation().getDegrees();
+        double target = alpha - beta;
 
-        alpha = Math.toDegrees(Math.atan(front/nextTo));
-        beta = robotPose.getRotation().getDegrees();
+        double shortenedAngle = MathUtil.inputModulus(target,RobotMap.TURRET_MIN_ANGLE, RobotMap.TURRET_MAX_ANGLE);
 
-        target = alpha+beta;
+        return MathUtil.clamp(shortenedAngle,RobotMap.TURRET_MIN_ANGLE, RobotMap.TURRET_MAX_ANGLE);
+    }
 
-        shortenedAngle = MathUtil.inputModulus(target,RobotMap.TURRET_MIN_ANGLE,RobotMap.TURRET_MAX_ANGLE);
-
-        clampedAngle = MathUtil.clamp(shortenedAngle,RobotMap.TURRET_MIN_ANGLE,RobotMap.TURRET_MAX_ANGLE);
-
-        return clampedAngle;
+    public double calculateTurretAngleToHubDegrees() {
+        Pose2d robotPose = swerve.getPose();
+        return calculateTurretAngleToHubDegrees(robotPose);
     }
 }
