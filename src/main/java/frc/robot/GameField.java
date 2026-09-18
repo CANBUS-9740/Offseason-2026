@@ -2,15 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.subsystems.Swerve;
-
-import java.util.Locale;
-import java.util.Optional;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public class GameField {
     // Origin 0,0 at blue 
@@ -18,7 +10,12 @@ public class GameField {
     private final AprilTagFieldLayout layout;
 
     public GameField() {
-        layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+        layout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltAndymark);
         layout.setOrigin(AprilTagFieldLayout.OriginPosition.kBlueAllianceWallRightSide);
+    }
+
+    public double getDistanceToHub(Pose2d pose) {
+        Pose2d hubPose = RobotMap.RED_HUB_POSE;
+        return 0;
     }
 }

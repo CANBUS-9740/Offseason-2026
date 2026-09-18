@@ -47,6 +47,7 @@ public class PitcherSystem extends SubsystemBase {
 
         if (RobotBase.isSimulation()) {
             sim = new PitcherSim(pitchermotor);
+            SmartDashboard.putData("PitcherSim", sim);
         } else {
             sim = null;
         }
@@ -97,7 +98,15 @@ public class PitcherSystem extends SubsystemBase {
         double degrees1 = Math.toDegrees(radiant1);
         double degrees2 = Math.toDegrees(radiant2);
 
-        return Math.max(degrees1, degrees2);
+        return translateFiringAngleToSystemAngle(Math.max(degrees1, degrees2));
+    }
+
+    public double translateFiringAngleToSystemAngle(double angle) {
+        return angle - RobotMap.INITIAL_FIRING_ANGLE_DEGREES;
+    }
+
+    public double translateSystemAngleToFiringAngle(double angle) {
+        return angle + RobotMap.INITIAL_FIRING_ANGLE_DEGREES;
     }
 
     @Override

@@ -1,31 +1,40 @@
 package frc.robot.sim;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.GameField;
 import frc.robot.RobotMap;
+import frc.robot.subsystems.Swerve;
 import org.dyn4j.geometry.Vector3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.function.Supplier;
 
 public class BallSim {
 
+    private final Supplier<Pose2d> robotPoseSupplier;
+    private final Supplier<Pose2d> hubPoseSupplier;
     private final Field2d field;
-    private final NetworkTable baseTable;
-    private final List<SimulatedBall> balls;
-    private int nextBallIndex;
+    private final NetworkTable table;
+    private SimulatedBall ball;
+    private final FiringDisplay firingDisplay;
 
-    public BallSim(Field2d field) {
-        this.field = field;
+    public BallSim(Swerve swerve, GameField gameField) {
+        robotPoseSupplier = swerve::getPose;
+        hubPoseSupplier = ()-> RobotMap.RED_HUB_POSE;
+        field = swerve.getField();
 
-        baseTable = NetworkTableInstance.getDefault().getTable("balls");
-        balls = new ArrayList<>();
-        nextBallIndex = 0;
+        table = NetworkTableInstance.getDefault().getTable("ball");
+        firingDisplay = new FiringDisplay();
+        SmartDashboard.putData("FiringDisplay", firingDisplay);
+
+        firingDisplay.setHubPosition(new Pose2d(6, 0, Rotation2d.kZero));
     }
 
     public void launchBall(Translation3d launchPosition, double shooterDirectionDegrees, double shooterRpm, double firingAngleDegrees) {
@@ -41,22 +50,26 @@ public class BallSim {
         Vector3 velocity = new Vector3(velX, velY, velZ);
         Vector3 acceleration = new Vector3(0, 0, -9.8);
 
-        int ballId = nextBallIndex++;
-        String ballName = String.format(Locale.ENGLISH, "Ball%d", ballId);
-        FieldObject2d fieldObject = field.getObject(ballName);
-        NetworkTable table = baseTable.getSubTable(ballName);
+        FieldObject2d fieldObject = field.getObject("Ball");
         SimulatedBall ball = new SimulatedBall(fieldObject, table);
+
+        firingDisplay.resetTrajectory();
+        firingDisplay.setBallPosition(position);
 
         ball.setPosition(position);
         ball.setVelocity(velocity);
         ball.setAcceleration(acceleration);
 
-        balls.add(ball);
+        this.ball = ball;
     }
 
     public void update() {
-        for (SimulatedBall ball : balls) {
+        firingDisplay.setRobotPosition(robotPoseSupplier.get());
+        firingDisplay.setHubPosition(hubPoseSupplier.get());
+
+        if (ball != null) {
             ball.update(0.02);
+            firingDisplay.setBallPosition(ball.getPosition());
         }
     }
 }

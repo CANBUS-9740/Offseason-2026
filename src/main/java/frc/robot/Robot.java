@@ -1,6 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -49,7 +51,7 @@ public class Robot extends TimedRobot {
         shooterSystem = new ShooterSystem();
 
         if (RobotBase.isSimulation()) {
-            ballSim = new BallSim(swerveSystem.getField());
+            ballSim = new BallSim(swerveSystem, gameField);
         } else {
             ballSim = null;
         }
@@ -78,6 +80,8 @@ public class Robot extends TimedRobot {
         });
 
         autoChooser = new SendableChooser<>();
+
+        swerveSystem.resetPose(new Pose2d(5, 1, Rotation2d.kZero));
 
         // Final operation controller:
 
@@ -154,7 +158,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-
+        launchBall();
     }
 
     @Override
@@ -203,9 +207,9 @@ public class Robot extends TimedRobot {
     public void launchBall() {
         Pose3d robotPose = new Pose3d(swerveSystem.getPose());
         Pose3d shootPose = robotPose.plus(RobotMap.TURRET_POSE_ON_ROBOT);
-        double firingAngleDegrees = pitcherSystem.getPositionDegrees();
+        double firingAngleDegrees = pitcherSystem.translateSystemAngleToFiringAngle(pitcherSystem.getPositionDegrees());
         double firingDirectionDegrees = turretSubsystem.getPositionDegrees();
-        double firingVelocityRpm = shooterSystem.getVelocityRPM();
+        double firingVelocityRpm = 4000;//shooterSystem.getVelocityRPM();
 
         ballSim.launchBall(shootPose.getTranslation(), firingDirectionDegrees, firingVelocityRpm, firingAngleDegrees);
     }

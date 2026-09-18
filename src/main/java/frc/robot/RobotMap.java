@@ -2,6 +2,8 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -17,10 +19,11 @@ public class RobotMap {
     // ----------------- Field info
 
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(104);
+    public static final Pose2d RED_HUB_POSE = new Pose2d(11.862321, 4.036290, Rotation2d.kZero);
 
     // ----------------- Sizes / Measurements of robot characteristics
 
-    public static final double ROBOT_LENGTH_METERS = 0;
+    public static final double ROBOT_LENGTH_METERS = 0.71;
     public static final double ROBOT_HEIGHT_METERS = 55;
 
     public static final double SHOOTER_WHEEL_MASS_KG = 0.0544;
@@ -105,7 +108,7 @@ public class RobotMap {
 
     //Pitcher System
     public static final int PITCHER_MOTOR_ID = 66;
-    public static final double INITIAL_FIRING_ANGLE_DEGREES = 103.071;
+    public static final double INITIAL_FIRING_ANGLE_DEGREES = 103.071 - 90;
     public static final int PITCHER_MIN_ANGLE_DEGREES = 0;
     public static final int PITCHER_MAX_ANGLE_DEGREES = 30;
     public static final PIDConstants PITCHER_PID = new PIDConstants(1,0,0);// TRIPLE UNKNOWN THIS AMAZING!
@@ -124,5 +127,5 @@ public class RobotMap {
     public static final DCMotor SHOOTER_MOTOR = DCMotor.getNeoVortex(1);
     public static final double SHOOTER_GEAR_RATIO = 1;
     public static final double SHOOTER_MOI = (1 / 2.0) * SHOOTER_WHEEL_MASS_KG * SHOOTER_WHEEL_RADIUS_METERS * SHOOTER_WHEEL_RADIUS_METERS;
-    public static final Transform3d TURRET_POSE_ON_ROBOT = new Transform3d(0, 0.370,0.132, Rotation3d.kZero);
+    public static final Transform3d TURRET_POSE_ON_ROBOT = new Transform3d(0.370, 0,0.132, Rotation3d.kZero);
 }

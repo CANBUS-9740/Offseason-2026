@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -36,8 +37,9 @@ public class GroupCommands {
     }
     public Command shootToHub() {
         Command command = Commands.defer(()-> {
+            Pose2d robotPose = swerveSystem.getPose();
             double angleForTurret = 0;
-            double distance = 0;
+            double distance = gameField.getDistanceToHub(robotPose);
             double velocity = 0;
             double firingAngle = pitcherSystem.calculateFiringAngleDegrees(distance, velocity);
             return new ParallelCommandGroup(
