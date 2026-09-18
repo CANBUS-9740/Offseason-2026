@@ -17,10 +17,10 @@ public class ShooterSystem extends SubsystemBase {
     private final SparkClosedLoopController pidController;
     private Ultrasonic ultrasonic;
 
-    public ShooterSystem(){
+    public ShooterSystem() {
         SparkFlexConfig config = new SparkFlexConfig();
         shootermotor = new SparkFlex(RobotMap.SHOOTER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
-        
+
         config.closedLoop
                 .p(RobotMap.PITCHER_PID.kP)
                 .i(RobotMap.PITCHER_PID.kI)
@@ -33,15 +33,16 @@ public class ShooterSystem extends SubsystemBase {
 
 
     }
-    public void set(double speed){
+
+    public void set(double speed) {
         shootermotor.set(speed);
     }
 
-    public void stop(){
+    public void stop() {
         shootermotor.stopMotor();
     }
 
-    public double getVelocityRPM(){
+    public double getVelocityRPM() {
         return encoder.getVelocity();
     }
 
@@ -50,11 +51,10 @@ public class ShooterSystem extends SubsystemBase {
         pidController.setSetpoint(velocityRPM, SparkBase.ControlType.kVelocity, ClosedLoopSlot.kSlot0, ff, SparkClosedLoopController.ArbFFUnits.kPercentOut);
     }
 
-    public boolean areThereBalls(){
-        if (ultrasonic.getRangeInches() <= RobotMap.SHOOTER_ULTRASONIC_MIN_DIS_INCHES){
+    public boolean areThereBalls() {
+        if (ultrasonic.getRangeMM() <= RobotMap.SHOOTER_ULTRASONIC_MIN_DIS_MM) {
             return false;
-        }
-        else{
+        } else {
             return true;
         }
 
