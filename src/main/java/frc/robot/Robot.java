@@ -209,7 +209,7 @@ public class Robot extends TimedRobot {
         Pose3d shootPose = robotPose.plus(RobotMap.TURRET_POSE_ON_ROBOT);
         double firingAngleDegrees = pitcherSystem.translateSystemAngleToFiringAngle(pitcherSystem.getPositionDegrees());
         double firingDirectionDegrees = turretSubsystem.getPositionDegrees();
-        double firingVelocityRpm = 4000;//shooterSystem.getVelocityRPM();
+        double firingVelocityRpm = shooterSystem.getVelocityRPM();
 
         ballSim.launchBall(shootPose.getTranslation(), firingDirectionDegrees, firingVelocityRpm, firingAngleDegrees);
     }
