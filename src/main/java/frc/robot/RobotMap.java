@@ -2,10 +2,6 @@ package frc.robot;
 
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -115,4 +111,9 @@ public class RobotMap {
     public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
     public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
+    public static final int SHOOTER_ULTRASONIC_ID = 0;
+    public static final int SHOOTER_ULTRASONIC_ECO_CHANNEL = 0;
+    public static final double SHOOTER_ULTRASONIC_MIN_DIS_MM = 0;
+    public static final int SHOOTER_TIMER_MAX_TIME = 0;
+
 }
