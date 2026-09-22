@@ -124,7 +124,7 @@ public class Robot extends TimedRobot {
             swerveSystem.addVisionMeasurement(posCam);
         }
 
-        Pose2d pose2d = new Pose2d(9, 3, Rotation2d.fromDegrees(120));
+        Pose2d pose2d = new Pose2d(2, 3.5, Rotation2d.fromDegrees(147));
         double turretAngleToHub = gameField.calculateTurretAngleToHubDegrees(pose2d);
         SmartDashboard.putNumber("TurretToHubAngle", turretAngleToHub);
 
