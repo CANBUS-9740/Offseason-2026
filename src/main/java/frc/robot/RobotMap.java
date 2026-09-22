@@ -32,13 +32,21 @@ public class RobotMap {
     public static final double INTAKE_ARM_MIN_ANGLE_RAD = 0;
     public static final double INTAKE_ARM_MAX_ANGLE_RAD = 92.5; // last 2 lines are for compiling only
     public static final TrapezoidProfile.Constraints INTAKE_ARM_MOTION_PROFILE_CONSTRAINTS = new TrapezoidProfile.Constraints(1000, 500);
-
     // intake collector
     public static final DCMotor COLLECTOR_MOTOR = DCMotor.getNEO(1);
     public static final double COLLECTOR_MASS_KG = 1;
     public static final double COLLECTOR_RADIUS_M = Units.inchesToMeters(4);
     public static final double COLLECTOR_MOI = 0.5 * COLLECTOR_MASS_KG * COLLECTOR_RADIUS_M * COLLECTOR_RADIUS_M;
     public static final double COLLECTOR_GEAR_RATIO = 1;
+    public static final int COLLECTOR_ULTRASONIC1_ID = 0;
+    public static final int COLLECTOR_ULTRASONIC2_ID = 0;
+    public static final int COLLECTOR_ULTRASONIC3_ID = 0;
+    public static final int COLLECTOR_ULTRASONIC4_ID = 0;
+    public static final int COLLECTOR_ULTRASONIC_ECO_CHANNEL1 = 0;
+    public static final int COLLECTOR_ULTRASONIC_ECO_CHANNEL2 = 0;
+    public static final int COLLECTOR_ULTRASONIC_ECO_CHANNEL3 = 0;
+    public static final int COLLECTOR_ULTRASONIC_ECO_CHANNEL4 = 0;
+    public static final double COLLECTOR_ULTRASONIC_MAX_DIS_MM = 0;
 
     // storage
     public static final DCMotor STORAGE_MOTOR1 = DCMotor.getNEO(1);
@@ -46,6 +54,7 @@ public class RobotMap {
     public static final double STORAGE_RADIUS_M = Units.inchesToMeters(4);
     public static final double STORAGE_MOI = 0.5 * STORAGE_MASS_KG * STORAGE_RADIUS_M * STORAGE_RADIUS_M;
     public static final double STORAGE_GEAR_RATIO = 1;
+    public static final double STORAGE_FULL_TIME = 0;
 
     // swerve
     public static final DCMotor SWERVE_DRIVE_MOTOR = DCMotor.getKrakenX60(1);
