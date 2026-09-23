@@ -64,8 +64,8 @@ public class RobotMap {
 
 
     // turret
-    public static final int TURRET_MOTOR_ID = 0;
-    public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
+    public static final int TURRET_MOTOR_ID = 76;
+    public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 9;
     public static final double TURRET_GEAR_RATIO = 15;
     public static final double TURRET_MIN_ANGLE = -90;
     public static final double TURRET_MAX_ANGLE = 90;
@@ -73,7 +73,10 @@ public class RobotMap {
     public static final double FORAWRD_LIMIT_SWITCH_ANGLE = 0;
     public static final double FORAWRD_HARD_LIMIT_SWITCH_ANGLE = 90;
     public static final double BACKWARD_HARD_LIMIT_SWITCH_ANGLE = -90;
-
+    public static final DCMotor TURRET_MOTOR = DCMotor.getNEO(1);
+    public static final double TURRET_MASS_KG = 0;
+    public static final double TURRET_RADIUS_METERS = 0;
+    public static final double TURRET_MOI = TURRET_MASS_KG * TURRET_RADIUS_METERS * TURRET_RADIUS_METERS;
 
 
     // intake arm
