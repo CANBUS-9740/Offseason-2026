@@ -6,8 +6,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public class RobotMap {
@@ -20,6 +20,10 @@ public class RobotMap {
 
     public static final double HUB_HEIGHT_METERS = Units.inchesToMeters(104);
     public static final Pose2d RED_HUB_POSE = new Pose2d(11.862321, 4.036290, Rotation2d.kZero);
+
+
+    public static final Translation2d HUB_RED_METERS = new Translation2d(11.896080,4.041692);
+    public static final Translation2d HUB_BLUE_METERS = new Translation2d(4.593718,4.011138);
 
     // ----------------- Sizes / Measurements of robot characteristics
 
@@ -66,14 +70,19 @@ public class RobotMap {
 
 
     // turret
-    public static final int TURRET_MOTOR_ID = 39;
-    public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
+    public static final int TURRET_MOTOR_ID = 76;
+    public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 9;
     public static final double TURRET_GEAR_RATIO = 15;
+    public static final double TURRET_MIN_ANGLE = -90;
+    public static final double TURRET_MAX_ANGLE = 90;
 
     public static final double FORAWRD_LIMIT_SWITCH_ANGLE = 0;
     public static final double FORAWRD_HARD_LIMIT_SWITCH_ANGLE = 90;
     public static final double BACKWARD_HARD_LIMIT_SWITCH_ANGLE = -90;
-
+    public static final DCMotor TURRET_MOTOR = DCMotor.getNEO(1);
+    public static final double TURRET_MASS_KG = 0;
+    public static final double TURRET_RADIUS_METERS = 0;
+    public static final double TURRET_MOI = TURRET_MASS_KG * TURRET_RADIUS_METERS * TURRET_RADIUS_METERS;
 
 
     // intake arm
@@ -131,13 +140,12 @@ public class RobotMap {
     public static final double SHOOTER_GEAR_RATIO = 1;
     public static final double SHOOTER_MOI = (1 / 2.0) * SHOOTER_WHEEL_MASS_KG * SHOOTER_WHEEL_RADIUS_METERS * SHOOTER_WHEEL_RADIUS_METERS;
     public static final Transform3d TURRET_POSE_ON_ROBOT = new Transform3d(0.370, 0,0.132, Rotation3d.kZero);
-
-    // feeder system
-    public static final int FEEDER_MOTOR_ID = 0; //unknown
-    public static final double FEEDER_VELOCITY_RPM = 0; //unknown
     public static final int SHOOTER_ULTRASONIC_ID = 0;
     public static final int SHOOTER_ULTRASONIC_ECO_CHANNEL = 0;
     public static final double SHOOTER_ULTRASONIC_MIN_DIS_MM = 0;
     public static final int SHOOTER_TIMER_MAX_TIME = 0;
+
+    // feeder system
+    public static final double FEEDER_VELOCITY_RPM = 0; //unknown
 
 }

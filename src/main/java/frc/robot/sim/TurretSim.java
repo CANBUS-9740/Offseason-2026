@@ -3,52 +3,79 @@ package frc.robot.sim;
 import com.revrobotics.sim.SparkLimitSwitchSim;
 import com.revrobotics.sim.SparkMaxSim;
 import com.revrobotics.spark.SparkMax;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.networktables.NTSendable;
+import edu.wpi.first.networktables.NTSendableBuilder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.DIOSim;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.RobotMap;
 
-public class TurretSim {
+public class TurretSim implements NTSendable {
 
-    /*private final DCMotorSim sim;
+    private static final Color8Bit MECHANISM_COLOR_SWITCH_OFF = new Color8Bit(Color.kRed);
+    private static final Color8Bit MECHANISM_COLOR_SWITCH_ON = new Color8Bit(Color.kGreen);
+
     private final SparkMaxSim motorSim;
+    private final DCMotorSim sim;
     private final SparkLimitSwitchSim forwardLimitSwitchSim;
     private final SparkLimitSwitchSim reverseLimitSwitchSim;
 
-    private final DIOSim limitSwitchMiddle;
+    private final Mechanism2d mechanism;
+    private final MechanismLigament2d mechanismCenterLine;
+    private final MechanismLigament2d mechanismSwitchMin;
+    private final MechanismLigament2d mechanismSwitchMax;
 
-    public TurretSim(SparkMax motor, DigitalInput limitSwitchMiddle) {
-        motorSim = new SparkMaxSim(motor, RobotMap.SHOOT_TURRET_MOTOR);
+    public TurretSim(SparkMax motor) {
+        motorSim = new SparkMaxSim(motor, RobotMap.TURRET_MOTOR);
+        sim = new DCMotorSim(LinearSystemId.createDCMotorSystem(RobotMap.TURRET_MOTOR, RobotMap.TURRET_MOI, RobotMap.TURRET_GEAR_RATIO), RobotMap.TURRET_MOTOR);
         forwardLimitSwitchSim = motorSim.getForwardLimitSwitchSim();
         reverseLimitSwitchSim = motorSim.getReverseLimitSwitchSim();
 
-        this.limitSwitchMiddle = new DIOSim(limitSwitchMiddle.getChannel());
-        this.limitSwitchMiddle.setIsInput(true);
-
-        sim = new DCMotorSim(
-                LinearSystemId.createDCMotorSystem(RobotMap.SHOOT_TURRET_MOTOR, RobotMap.SHOOT_TURRET_MOMENT_OF_INERTIA, RobotMap.SHOOT_TURRET_GEAR_RATIO),
-                RobotMap.SHOOT_TURRET_MOTOR
-        );
+        mechanism = new Mechanism2d(2, 2);
+        MechanismRoot2d mechanismRoot = mechanism.getRoot("base", 1, 0.8);
+        mechanismCenterLine = mechanismRoot.append(new MechanismLigament2d("line", 0.9, 0, 5, new Color8Bit(Color.kRed)));
+        mechanismSwitchMin = mechanism.getRoot("minRoot", 0.2, 0.5)
+                .append(new MechanismLigament2d("switchBottom", 0.15, 180, 4, MECHANISM_COLOR_SWITCH_OFF));
+        mechanismSwitchMax = mechanism.getRoot("maxRoot", 1.8, 0.5)
+                .append(new MechanismLigament2d("switchTop", 0.15, 180, 4, MECHANISM_COLOR_SWITCH_OFF));
     }
 
     public void update() {
-        sim.setInputVoltage(motorSim.getAppliedOutput() * RobotController.getBatteryVoltage());
-
-        if (forwardLimitSwitchSim.getPressed() || reverseLimitSwitchSim.getPressed()) {
-            sim.setState(sim.getAngularPositionRad(), 0);
+        double batteryVoltage = RobotController.getBatteryVoltage();
+        double volts = motorSim.getAppliedOutput() * batteryVoltage;
+        if (Math.toDegrees(sim.getAngularPositionRad()) >= RobotMap.TURRET_MAX_ANGLE && volts > 0) {
+            sim.setState(Math.toRadians(RobotMap.TURRET_MAX_ANGLE), 0);
+            volts = 0;
+        } else if (Math.toDegrees(sim.getAngularPositionRad()) <= RobotMap.TURRET_MIN_ANGLE && volts < 0) {
+            sim.setState(Math.toRadians(RobotMap.TURRET_MIN_ANGLE), 0);
+            volts = 0;
         }
+        sim.setInputVoltage(volts);
+        sim.update(0.020);
+        motorSim.iterate(
+                Units.radiansPerSecondToRotationsPerMinute(sim.getAngularVelocityRadPerSec()),
+                batteryVoltage,
+                0.020);
 
-        sim.update(0.02);
+        double posDegrees = Math.toDegrees(sim.getAngularPositionRad());
+        mechanismCenterLine.setAngle(posDegrees);
 
-        motorSim.iterate(sim.getAngularVelocityRPM(), RobotController.getBatteryVoltage(), 0.02);
+        boolean atMax = posDegrees >= RobotMap.TURRET_MAX_ANGLE - 1;
+        boolean atMin = posDegrees <= RobotMap.TURRET_MIN_ANGLE + 1;
+        forwardLimitSwitchSim.setPressed(atMax);
+        reverseLimitSwitchSim.setPressed(atMin);
+        mechanismSwitchMin.setColor(atMin ? MECHANISM_COLOR_SWITCH_ON : MECHANISM_COLOR_SWITCH_OFF);
+        mechanismSwitchMax.setColor(atMax ? MECHANISM_COLOR_SWITCH_ON : MECHANISM_COLOR_SWITCH_OFF);
+    }
 
-        double posDegrees = Units.radiansToDegrees(sim.getAngularPositionRad()) % 360;
-        limitSwitchMiddle.setValue(MathUtil.isNear(RobotMap.TURRET_MIDDLE_ANGLE_DEGREES, posDegrees, 3));
-        forwardLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.TURRET_MAX_ANGLE_DEGREES, posDegrees, 5));
-        reverseLimitSwitchSim.setPressed(MathUtil.isNear(RobotMap.TURRET_MIN_ANGLE_DEGREES, posDegrees, 5));
-    }*/
+    @Override
+    public void initSendable(NTSendableBuilder ntSendableBuilder) {
+        mechanism.initSendable(ntSendableBuilder);
+    }
 }
