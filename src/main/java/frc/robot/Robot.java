@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,6 +41,10 @@ public class Robot extends TimedRobot {
     private Command collectCommand;
     private Command stopCollectCommand;
     private boolean isCollecting = false;
+    private Command waitUntilNoMoreBallsToShooterCommand;
+
+    private FeederSubsystem feederSubsystem;
+
 
     @Override
     public void robotInit() {
@@ -50,6 +55,8 @@ public class Robot extends TimedRobot {
         turretSubsystem = new TurretSubsystem();
         pitcherSystem = new PitcherSystem();
         shooterSystem = new ShooterSystem();
+        feederSubsystem = new FeederSubsystem();
+
 
         limelight = new Limelight("limelight-forward");
 
@@ -58,6 +65,8 @@ public class Robot extends TimedRobot {
 
         driverController = new CommandXboxController(0);
         operationController = new CommandXboxController(1);
+
+        Ultrasonic.setAutomaticMode(true);
 
         swerveDriveCommand = new SwerveDriveCommand(swerveSystem, driverController, false);
         groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
