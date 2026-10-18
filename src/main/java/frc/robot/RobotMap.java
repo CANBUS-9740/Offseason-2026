@@ -53,6 +53,7 @@ public class RobotMap {
     // ----------------- Connections
 
 
+
     // turret
     public static final int TURRET_MOTOR_ID = 0;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
@@ -111,6 +112,10 @@ public class RobotMap {
     public static final int SHOOTER_MOTOR_ID = 0; //UNKNOWN
     public static final PIDConstants SHOOTER_PID = new PIDConstants(0,0,0); // unknown for now
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
+
+    // feeder system
+    public static final int FEEDER_MOTOR_ID = 0; //unknown
+    public static final double FEEDER_VELOCITY_RPM = 0; //unknown
     public static final int SHOOTER_ULTRASONIC_ID = 0;
     public static final int SHOOTER_ULTRASONIC_ECO_CHANNEL = 0;
     public static final double SHOOTER_ULTRASONIC_MIN_DIS_MM = 0;
