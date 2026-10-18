@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.PersistMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.*;
 import com.revrobotics.spark.config.LimitSwitchConfig;
@@ -19,7 +20,7 @@ import frc.robot.sim.ShooterSim;
 public class PitcherSystem extends SubsystemBase {
     private final SparkMax pitchermotor;
 
-    private final AbsoluteEncoder encoder;
+    private final RelativeEncoder encoder;
     private final SparkLimitSwitch toplimitswitch;
     private final SparkLimitSwitch bottomlimitswitch;
     private final SparkClosedLoopController pidController;
@@ -31,7 +32,7 @@ public class PitcherSystem extends SubsystemBase {
         pitchermotor = new SparkMax(RobotMap.PITCHER_MOTOR_ID, SparkLowLevel.MotorType.kBrushless);
 
         config.closedLoop.pid(RobotMap.PITCHER_PID.kP, RobotMap.PITCHER_PID.kI, RobotMap.PITCHER_PID.kD)
-                .feedbackSensor(FeedbackSensor.kAbsoluteEncoder);
+                .feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         config.limitSwitch
                 .forwardLimitSwitchType(LimitSwitchConfig.Type.kNormallyOpen)
                 .forwardLimitSwitchTriggerBehavior(LimitSwitchConfig.Behavior.kStopMovingMotor)
@@ -40,7 +41,7 @@ public class PitcherSystem extends SubsystemBase {
         config.idleMode(SparkBaseConfig.IdleMode.kBrake);
         pitchermotor.configure(config, ResetMode.kNoResetSafeParameters, PersistMode.kNoPersistParameters);
 
-        encoder = pitchermotor.getAbsoluteEncoder();
+        encoder = pitchermotor.getEncoder();
         pidController = pitchermotor.getClosedLoopController();
         toplimitswitch = pitchermotor.getForwardLimitSwitch();
         bottomlimitswitch = pitchermotor.getReverseLimitSwitch();

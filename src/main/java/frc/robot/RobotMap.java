@@ -65,7 +65,7 @@ public class RobotMap {
 
 
     // turret
-    public static final int TURRET_MOTOR_ID = 0;
+    public static final int TURRET_MOTOR_ID = 39;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
     public static final double TURRET_GEAR_RATIO = 15;
 
@@ -76,13 +76,15 @@ public class RobotMap {
 
 
     // intake arm
-    public static final int INTAKE_ARM_MOTOR_ID = 21;
+    public static final int INTAKE_ARM_MOTOR_ID = 45;
 
     // intake collector
-    public static final int COLLECTOR_MOTOR_ID = 39;
+    public static final int COLLECTOR_MOTOR_ID = 36;
+
+    public static final int FEEDER_MOTOR_ID = 14;
 
     // storage
-    public static final int STORAGE_MOTOR1_ID = 20;
+    public static final int STORAGE_MOTOR1_ID = 35;
 
     // ----------------- Operational
 
@@ -107,20 +109,20 @@ public class RobotMap {
     public static final PIDConstants SWERVE_PATH_ROTATE_PID = new PIDConstants(3, 0, 0);
 
     //Pitcher System
-    public static final int PITCHER_MOTOR_ID = 66;
+    public static final int PITCHER_MOTOR_ID = 20;
     public static final double INITIAL_FIRING_ANGLE_DEGREES = 103.071 - 90;
     public static final int PITCHER_MIN_ANGLE_DEGREES = 0;
     public static final int PITCHER_MAX_ANGLE_DEGREES = 30;
-    public static final PIDConstants PITCHER_PID = new PIDConstants(1,0,0);// TRIPLE UNKNOWN THIS AMAZING!
+    public static final PIDConstants PITCHER_PID = new PIDConstants(0.06,0,0);// TRIPLE UNKNOWN THIS AMAZING!
     public static final DCMotor SHOOTER_PITCHER_MOTOR = DCMotor.getNEO(1);
     public static final double PITCHER_MASS_KG = SHOOTER_WHEEL_MASS_KG*3 + SHOOTER_WHEEL_MASS_KG_SMALL*5 + SHOOTER_NEO_11_MASS_KG + SHOOTER_NEO_VORTEX_MASS_KG + TOTAL_SHOOTER_HEX_BORE_INCH_MASS_KG;
     public static final double PITCHER_LENGTH_M = 0.22;
     public static final double PITCHER_MOI = (1 / 3.0) * PITCHER_MASS_KG * PITCHER_LENGTH_M * PITCHER_LENGTH_M;
-    public static final double PITCHER_GEAR_RATIO = 5;
+    public static final double PITCHER_GEAR_RATIO = 1.875015;
 
     //Shooter System
-    public static final int SHOOTER_MOTOR_ID = 67; //UNKNOWN
-    public static final PIDConstants SHOOTER_PID = new PIDConstants(1,0,0); // unknown for now
+    public static final int SHOOTER_MOTOR_ID = 8; //UNKNOWN
+    public static final PIDConstants SHOOTER_PID = new PIDConstants(0.005,0,0); // unknown for now
     public static final double SHOOTER_WHEEL_RADIUS_METERS = 0.0381;
     public static final double SHOOTER_WHEEL_RADIUS_METERS_SMALL = 0.0254;
     public static final double MAX_SHOOTER_VELOCITY_RPM = Units.radiansPerSecondToRotationsPerMinute(DCMotor.getNeoVortex(1).freeSpeedRadPerSec);
