@@ -64,6 +64,7 @@ public class RobotMap {
     // ----------------- Connections
 
 
+
     // turret
     public static final int TURRET_MOTOR_ID = 39;
     public static final int TURRET_FORWARD_LIMIT_SWITCH_ID = 0;
@@ -130,4 +131,13 @@ public class RobotMap {
     public static final double SHOOTER_GEAR_RATIO = 1;
     public static final double SHOOTER_MOI = (1 / 2.0) * SHOOTER_WHEEL_MASS_KG * SHOOTER_WHEEL_RADIUS_METERS * SHOOTER_WHEEL_RADIUS_METERS;
     public static final Transform3d TURRET_POSE_ON_ROBOT = new Transform3d(0.370, 0,0.132, Rotation3d.kZero);
+
+    // feeder system
+    public static final int FEEDER_MOTOR_ID = 0; //unknown
+    public static final double FEEDER_VELOCITY_RPM = 0; //unknown
+    public static final int SHOOTER_ULTRASONIC_ID = 0;
+    public static final int SHOOTER_ULTRASONIC_ECO_CHANNEL = 0;
+    public static final double SHOOTER_ULTRASONIC_MIN_DIS_MM = 0;
+    public static final int SHOOTER_TIMER_MAX_TIME = 0;
+
 }

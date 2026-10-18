@@ -27,11 +27,11 @@
         private TurretSubsystem turretSubsystem;
         private PitcherSystem pitcherSystem;
         private ShooterSystem shooterSystem;
-
+        private FeederSubsystem feederSubsystem;
+      
         private Limelight limelight;
         private GameField gameField;
         private Pathplanner pathplanner;
-
 
         private CommandXboxController driverController;
         private CommandXboxController operationController;
@@ -39,7 +39,11 @@
 
         private GroupCommands groupCommands;
         private SendableChooser<Command> autoChooser;
-
+      
+        private Command collectCommand;
+        private Command stopCollectCommand;
+        private boolean isCollecting = false;
+        private Command waitUntilNoMoreBallsToShooterCommand;
         private BallSim ballSim;
 
         @Override
@@ -51,6 +55,7 @@
             turretSubsystem = new TurretSubsystem();
             pitcherSystem = new PitcherSystem();
             shooterSystem = new ShooterSystem();
+            feederSubsystem = new FeederSubsystem();
 
             if (RobotBase.isSimulation()) {
                 ballSim = new BallSim(swerveSystem, gameField);
@@ -83,12 +88,7 @@
             });
 
             autoChooser = new SendableChooser<>();
-
-            // Final operation controller:
-
-            /*collectCommand = groupCommands.intakeAndCollect();
-            stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
-
+          
             operationController.y().onTrue(new InstantCommand(() -> {
                 isCollecting = !isCollecting;
 
@@ -100,8 +100,17 @@
             }));
 
 
+            // Final operation controller:
+
+            /*collectCommand = groupCommands.intakeAndCollect();
+            stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
+
             operationController.x().onTrue(groupCommands.shootHub());
             operationController.rightBumper().onTrue(groupCommands.shootForBallTransfer());
+            Ultrasonic.setAutomaticMode(true);
+
+        swerveDriveCommand = new SwerveDriveCommand(swerveSystem, driverController, false);
+        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
 
             operationController.a().whileTrue(groupCommands.intakeUnjam1());
             operationController.start().onTrue(groupCommands.cancelAllCommands());
