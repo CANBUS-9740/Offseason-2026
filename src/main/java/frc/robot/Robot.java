@@ -1,10 +1,10 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -12,8 +12,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.*;
+import frc.robot.sim.BallSim;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-
 import java.util.Optional;
 
 public class Robot extends TimedRobot {
@@ -25,6 +26,7 @@ public class Robot extends TimedRobot {
     private TurretSubsystem turretSubsystem;
     private PitcherSystem pitcherSystem;
     private ShooterSystem shooterSystem;
+    private FeederSubsystem feederSubsystem;
 
     private Limelight limelight;
     private GameField gameField;
@@ -37,14 +39,11 @@ public class Robot extends TimedRobot {
     private GroupCommands groupCommands;
     private SendableChooser<Command> autoChooser;
 
-
     private Command collectCommand;
     private Command stopCollectCommand;
     private boolean isCollecting = false;
     private Command waitUntilNoMoreBallsToShooterCommand;
-
-    private FeederSubsystem feederSubsystem;
-
+    private BallSim ballSim;
 
     @Override
     public void robotInit() {
@@ -57,6 +56,11 @@ public class Robot extends TimedRobot {
         shooterSystem = new ShooterSystem();
         feederSubsystem = new FeederSubsystem();
 
+        if (RobotBase.isSimulation()) {
+            ballSim = new BallSim(swerveSystem, gameField);
+        } else {
+            ballSim = null;
+        }
 
         limelight = new Limelight("limelight-forward");
 
@@ -65,14 +69,12 @@ public class Robot extends TimedRobot {
 
         driverController = new CommandXboxController(0);
         operationController = new CommandXboxController(1);
-
-        Ultrasonic.setAutomaticMode(true);
+        driverController.x().onTrue(new InstantCommand(this::launchBall));
 
         swerveDriveCommand = new SwerveDriveCommand(swerveSystem, driverController, false);
-        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
+        groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField, shooterSystem, pitcherSystem ,turretSubsystem);
 
         swerveSystem.setDefaultCommand(swerveDriveCommand);
-        turretSubsystem.setDefaultCommand(new TurretTrackHubCommand(turretSubsystem, gameField));
 
         CommandScheduler.getInstance().onCommandInitialize((command)-> {
             System.out.printf("CMD INIT %s %s\n", command.getName(), command.getClass().getName());
@@ -86,11 +88,6 @@ public class Robot extends TimedRobot {
 
         autoChooser = new SendableChooser<>();
 
-        // Final operation controller:
-
-        /*collectCommand = groupCommands.intakeAndCollect();
-        stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
-
         operationController.y().onTrue(new InstantCommand(() -> {
             isCollecting = !isCollecting;
 
@@ -102,14 +99,22 @@ public class Robot extends TimedRobot {
         }));
 
 
+        // Final operation controller:
+
+        /*collectCommand = groupCommands.intakeAndCollect();
+        stopCollectCommand = groupCommands.stopIntakeAndStopCollect();
+
         operationController.x().onTrue(groupCommands.shootHub());
         operationController.rightBumper().onTrue(groupCommands.shootForBallTransfer());
+        Ultrasonic.setAutomaticMode(true);
 
         operationController.a().whileTrue(groupCommands.intakeUnjam1());
         operationController.start().onTrue(groupCommands.cancelAllCommands());
         operationController.b().whileTrue(groupCommands.intakeUnjam2());
         operationController.leftBumper().onTrue(groupCommands.shootForBallTransfer());
         operationController.pov(270).onTrue(groupCommands.shoot(2));
+        swerveSystem.setDefaultCommand(swerveDriveCommand);
+        turretSubsystem.setDefaultCommand(new TurretTrackHubCommand(turretSubsystem, gameField));
 
         driverController.start().onTrue(groupCommands.cancelAllCommands());
 
@@ -150,7 +155,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-
+        ballSim.update();
     }
 
     @Override
@@ -175,6 +180,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+
 
     }
 
@@ -214,5 +220,15 @@ public class Robot extends TimedRobot {
     @Override
     public void testExit() {
 
+    }
+
+    public void launchBall() {
+        Pose3d robotPose = new Pose3d(swerveSystem.getPose());
+        Pose3d shootPose = robotPose.plus(RobotMap.TURRET_POSE_ON_ROBOT);
+        double firingAngleDegrees = pitcherSystem.translateSystemAngleToFiringAngle(pitcherSystem.getPositionDegrees());
+        double firingDirectionDegrees = turretSubsystem.getPositionDegrees();
+        double firingVelocityRpm = shooterSystem.getVelocityRPM();
+
+        ballSim.launchBall(shootPose.getTranslation(), firingDirectionDegrees, firingVelocityRpm, firingAngleDegrees);
     }
 }

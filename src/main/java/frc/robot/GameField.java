@@ -2,9 +2,9 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Swerve;
@@ -63,5 +63,10 @@ public class GameField {
     public double calculateTurretAngleToHubDegrees() {
         Pose2d robotPose = swerve.getPose();
         return calculateTurretAngleToHubDegrees(robotPose);
+    }
+
+    public double getDistanceToHub(Pose2d pose) {
+        Pose2d hubPose = RobotMap.RED_HUB_POSE;
+        return 0;
     }
 }
