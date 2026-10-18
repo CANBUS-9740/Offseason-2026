@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Ultrasonic;
@@ -59,7 +60,7 @@ public class Robot extends TimedRobot {
 
         limelight = new Limelight("limelight-forward");
 
-        gameField = new GameField();
+        gameField = new GameField(swerveSystem);
         pathplanner = new Pathplanner(swerveSystem);
 
         driverController = new CommandXboxController(0);
@@ -71,6 +72,7 @@ public class Robot extends TimedRobot {
         groupCommands = new GroupCommands(swerveSystem, intakeArmSystem, intakeCollectorSystem, storageSystem, gameField);
 
         swerveSystem.setDefaultCommand(swerveDriveCommand);
+        turretSubsystem.setDefaultCommand(new TurretTrackHubCommand(turretSubsystem, gameField));
 
         CommandScheduler.getInstance().onCommandInitialize((command)-> {
             System.out.printf("CMD INIT %s %s\n", command.getName(), command.getClass().getName());
@@ -130,6 +132,15 @@ public class Robot extends TimedRobot {
             LimelightHelpers.PoseEstimate posCam = poseOpt.get();
             swerveSystem.addVisionMeasurement(posCam);
         }
+
+        Pose2d pose2d = new Pose2d(2, 3.5, Rotation2d.fromDegrees(147));
+        double turretAngleToHub = gameField.calculateTurretAngleToHubDegrees(pose2d);
+        SmartDashboard.putNumber("TurretToHubAngle", turretAngleToHub);
+
+        Pose2d hubPose = new Pose2d(gameField.hubPosition(), Rotation2d.kZero);
+        swerveSystem.getField().getObject("Hub").setPose(hubPose);
+        Pose2d turretPose = new Pose2d(pose2d.getX(), pose2d.getY(), Rotation2d.fromDegrees(turretAngleToHub + pose2d.getRotation().getDegrees()));
+        swerveSystem.getField().getObject("Turret").setPose(turretPose);
     }
 
     @Override

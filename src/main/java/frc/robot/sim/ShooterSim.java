@@ -17,15 +17,15 @@ import frc.robot.RobotMap;
 
 public class ShooterSim {
 
-    private final SparkFlexSim shooterMotorSim;
-    private final FlywheelSim shooterSim;
-    private final SparkMaxSim pitchMotorSim;
-    private final DCMotorSim pitchSim;
+    private final SparkFlexSim shooterMotorSim = null;
+    private final FlywheelSim shooterSim = null;
+    private final SparkMaxSim pitchMotorSim = null;
+    private final DCMotorSim pitchSim = null;
 
     public final BallSim ballSim;
 
     public ShooterSim(Field2d field, SparkFlex shooterMotor, SparkMax pitchMotor) {
-        shooterMotorSim = new SparkFlexSim(shooterMotor, RobotMap.SHOOTER_MOTOR);
+        /*shooterMotorSim = new SparkFlexSim(shooterMotor, RobotMap.SHOOTER_MOTOR);
         shooterSim = new FlywheelSim(
                 LinearSystemId.createFlywheelSystem(RobotMap.SHOOTER_MOTOR, RobotMap.SHOOTER_MOI, RobotMap.SHOOTER_GEAR_RATIO),
                 RobotMap.SHOOTER_MOTOR);
@@ -33,14 +33,14 @@ public class ShooterSim {
         pitchMotorSim = new SparkMaxSim(pitchMotor, RobotMap.SHOOTER_PITCH_MOTOR_SIM);
         pitchSim = new DCMotorSim(
                 LinearSystemId.createDCMotorSystem(RobotMap.SHOOTER_PITCH_MOTOR_SIM, RobotMap.SHOOTER_PITCH_MOI, RobotMap.SHOOTER_PITCH_GEAR_RATIO),
-                RobotMap.SHOOTER_PITCH_MOTOR_SIM);
+                RobotMap.SHOOTER_PITCH_MOTOR_SIM);*/
 
         ballSim = new BallSim(field);
     }
 
     public void launchBall(Pose2d robotPose, double turretDirectionDegrees) {
         Pose3d robotPose3d = new Pose3d(robotPose);
-        Pose3d shootPose = robotPose3d.plus(RobotMap.SHOOTER_POSE_ON_ROBOT);
+        Pose3d shootPose = robotPose3d;//.plus(RobotMap.SHOOTER_POSE_ON_ROBOT);
 
         double shootingDirection = Math.toDegrees(shootPose.getRotation().getZ()) + turretDirectionDegrees;
         shootingDirection %= 360;

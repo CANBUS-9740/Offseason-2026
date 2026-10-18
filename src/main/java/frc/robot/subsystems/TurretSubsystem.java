@@ -8,9 +8,11 @@ import com.revrobotics.spark.config.LimitSwitchConfig;
 import com.revrobotics.spark.config.SparkBaseConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
+import frc.robot.sim.TurretSim;
 
 public class TurretSubsystem extends SubsystemBase {
     private final SparkMax motor;
@@ -19,6 +21,8 @@ public class TurretSubsystem extends SubsystemBase {
     private final SparkLimitSwitch middleLimitSwitchForward;
     private final SparkLimitSwitch middleLimitSwitchBackward;
     private final SparkClosedLoopController pidController;
+
+    private final TurretSim sim;
 
     public TurretSubsystem(){
         motor = new SparkMax(RobotMap.TURRET_MOTOR_ID , SparkLowLevel.MotorType.kBrushless);
@@ -48,6 +52,13 @@ public class TurretSubsystem extends SubsystemBase {
         encoder = motor.getEncoder();
 
         pidController = motor.getClosedLoopController();
+
+        if (RobotBase.isSimulation()) {
+            sim = new TurretSim(motor);
+            SmartDashboard.putData("TurretSim", sim);
+        } else {
+            sim = null;
+        }
     }
 
     public void moveToSetpoint(double angleDegrees) {
@@ -91,5 +102,10 @@ public class TurretSubsystem extends SubsystemBase {
     public void periodic(){
         SmartDashboard.putNumber("turretPositionDegrees", getPositionDegrees());
         SmartDashboard.putBoolean("forwardLimitSwitch", isForwardLimitSwitch());
+    }
+
+    @Override
+    public void simulationPeriodic() {
+        sim.update();
     }
 }
